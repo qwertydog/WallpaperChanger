@@ -20,7 +20,7 @@ namespace WallpaperChanger
         private AuthenticatedUser user;
 
         // list of subreddits to select from
-        private List<Subreddit> subredditList;
+        private List<string> subredditList;
 
 
         private List<string> seenList;
@@ -71,17 +71,17 @@ namespace WallpaperChanger
             }
 
             // default subreddits
-            subredditList = new List<Subreddit> {
-                reddit.GetSubreddit("wallpapers"),
-                reddit.GetSubreddit("wallpaper"),
-                reddit.GetSubreddit("gentlemanboners"),
-                reddit.GetSubreddit("woahdude"),
-                reddit.GetSubreddit("interestingasfuck")
+            subredditList = new List<string> {
+                "wallpapers",
+                "wallpaper",
+                "gentlemanboners",
+                "woahdude",
+                "interestingasfuck"
             };
 
             foreach (var subreddit in subredditList)
             {
-                SubsChecklist.Items.Add(subreddit.Name);
+                SubsChecklist.Items.Add(subreddit);
             }
 
             CheckAllItems(true);
@@ -98,18 +98,18 @@ namespace WallpaperChanger
 
             this.user = user;
 
-            subredditList = new List<Subreddit>();
+            subredditList = new List<string>();
 
             SubsChecklist.Items.Clear();
 
             foreach (var sub in user.SubscribedSubreddits)
             {
-                subredditList.Add(sub);
+                subredditList.Add(sub.Name);
             }
 
             foreach (var sub in subredditList)
             {
-                SubsChecklist.Items.Add(sub.Name);
+                SubsChecklist.Items.Add(sub);
             }
 
             CheckAllItems(true);
@@ -135,17 +135,19 @@ namespace WallpaperChanger
 
             if (e.NewValue == CheckState.Unchecked)
             {
+
                 foreach (var listSub in subredditList)
                 {
-                    if (listSub.Name == subName) subredditList.Remove(listSub);
+                    if (listSub == subName)
+                    { 
+                        subredditList.Remove(listSub);
+                        break;
+                    }
                 }
             }
             else if (e.NewValue == CheckState.Checked)
             {
-                var sub = subredditList.Find(item => item.Name == subName);
-
-                if (sub == null) subredditList.Add(reddit.GetSubreddit(subName));
-
+                if (!subredditList.Contains(subName)) subredditList.Add(subName);
             }
         }
 
@@ -244,7 +246,7 @@ namespace WallpaperChanger
 
                 if (sub != null)
                 {
-                    subredditList.Add(sub);
+                    subredditList.Add(sub.Name);
 
                     SubsChecklist.Items.Add(sub.Name,true);
 

@@ -57,8 +57,6 @@ namespace WallpaperChanger
         {
             Cursor = Cursors.WaitCursor;
 
-            var reddit = new Reddit();
-
             try
             {
                 var user = reddit.LogIn(UsernameBox.Text, PasswordBox.Text);
