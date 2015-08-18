@@ -219,7 +219,7 @@
             this.StartupCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.StartupCheckBox.Checked = true;
             this.StartupCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.StartupCheckBox.Location = new System.Drawing.Point(334, 146);
+            this.StartupCheckBox.Location = new System.Drawing.Point(334, 123);
             this.StartupCheckBox.Name = "StartupCheckBox";
             this.StartupCheckBox.Size = new System.Drawing.Size(93, 17);
             this.StartupCheckBox.TabIndex = 17;
@@ -231,7 +231,7 @@
             // 
             this.RedditRadioButton.AutoSize = true;
             this.RedditRadioButton.Checked = true;
-            this.RedditRadioButton.Location = new System.Drawing.Point(206, 145);
+            this.RedditRadioButton.Location = new System.Drawing.Point(205, 122);
             this.RedditRadioButton.Name = "RedditRadioButton";
             this.RedditRadioButton.Size = new System.Drawing.Size(80, 17);
             this.RedditRadioButton.TabIndex = 18;
@@ -242,7 +242,7 @@
             // DirectoryRadioButton
             // 
             this.DirectoryRadioButton.AutoSize = true;
-            this.DirectoryRadioButton.Location = new System.Drawing.Point(206, 169);
+            this.DirectoryRadioButton.Location = new System.Drawing.Point(205, 146);
             this.DirectoryRadioButton.Name = "DirectoryRadioButton";
             this.DirectoryRadioButton.Size = new System.Drawing.Size(130, 17);
             this.DirectoryRadioButton.TabIndex = 19;
@@ -253,7 +253,7 @@
             // RedditDirectoryRadioButton
             // 
             this.RedditDirectoryRadioButton.AutoSize = true;
-            this.RedditDirectoryRadioButton.Location = new System.Drawing.Point(205, 193);
+            this.RedditDirectoryRadioButton.Location = new System.Drawing.Point(204, 170);
             this.RedditDirectoryRadioButton.Name = "RedditDirectoryRadioButton";
             this.RedditDirectoryRadioButton.Size = new System.Drawing.Size(149, 17);
             this.RedditDirectoryRadioButton.TabIndex = 20;
@@ -263,7 +263,7 @@
             // 
             // DirectoryTextBox
             // 
-            this.DirectoryTextBox.Location = new System.Drawing.Point(205, 229);
+            this.DirectoryTextBox.Location = new System.Drawing.Point(203, 215);
             this.DirectoryTextBox.Name = "DirectoryTextBox";
             this.DirectoryTextBox.Size = new System.Drawing.Size(192, 20);
             this.DirectoryTextBox.TabIndex = 21;
@@ -271,7 +271,7 @@
             // DirectoryLabel
             // 
             this.DirectoryLabel.AutoSize = true;
-            this.DirectoryLabel.Location = new System.Drawing.Point(205, 213);
+            this.DirectoryLabel.Location = new System.Drawing.Point(203, 199);
             this.DirectoryLabel.Name = "DirectoryLabel";
             this.DirectoryLabel.Size = new System.Drawing.Size(49, 13);
             this.DirectoryLabel.TabIndex = 22;
@@ -279,7 +279,7 @@
             // 
             // BrowseButton
             // 
-            this.BrowseButton.Location = new System.Drawing.Point(402, 228);
+            this.BrowseButton.Location = new System.Drawing.Point(400, 214);
             this.BrowseButton.Name = "BrowseButton";
             this.BrowseButton.Size = new System.Drawing.Size(25, 21);
             this.BrowseButton.TabIndex = 23;
@@ -325,11 +325,11 @@
             // 
             this.MinimizedCheckBox.AutoSize = true;
             this.MinimizedCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.MinimizedCheckBox.Location = new System.Drawing.Point(330, 122);
+            this.MinimizedCheckBox.Location = new System.Drawing.Point(348, 146);
             this.MinimizedCheckBox.Name = "MinimizedCheckBox";
-            this.MinimizedCheckBox.Size = new System.Drawing.Size(97, 17);
+            this.MinimizedCheckBox.Size = new System.Drawing.Size(79, 17);
             this.MinimizedCheckBox.TabIndex = 26;
-            this.MinimizedCheckBox.Text = "Start Minimized";
+            this.MinimizedCheckBox.Text = "Start in tray";
             this.MinimizedCheckBox.UseVisualStyleBackColor = true;
             // 
             // AddSubTextBox

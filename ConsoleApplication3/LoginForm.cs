@@ -17,7 +17,12 @@ namespace WallpaperChanger
     {
         private Reddit reddit;
 
-        private void OpenMainForm(Reddit reddit, AuthenticatedUser user = null)
+        private void OpenMainForm(Reddit reddit)
+        {
+            OpenMainForm(reddit, null);
+        }
+
+        private void OpenMainForm(Reddit reddit, AuthenticatedUser user)
         {
             MainForm Mainform;
 
@@ -62,8 +67,11 @@ namespace WallpaperChanger
                 var user = reddit.LogIn(UsernameBox.Text, PasswordBox.Text);
                 OpenMainForm(reddit, user);
 
-            } catch
+            }
+            catch (AuthenticationException ex)
             {
+                Console.WriteLine(ex);
+
                 Cursor = Cursors.Default;
                 MessageBox.Show("Please check your details and try again", "Unable To Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }

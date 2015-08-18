@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,50 +16,62 @@ namespace WallpaperChanger
 {
     public partial class MainForm : Form
     {
-
         private Reddit reddit;
         private AuthenticatedUser user;
+
+        private RegistryKey rk;
+
+        private Random rand;
+
+        private string currentImage, nextImage;
 
         // list of subreddits to select from
         private List<string> subredditList;
 
+        // master list of all images
+        private List<string> images;
 
+        // list of images already displayed
         private List<string> seenList;
 
-        RegistryKey rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-
-        private void CheckAllItems(bool value)
-        {
-            for (int i = 0; i < SubsChecklist.Items.Count; ++i)
-            {
-                SubsChecklist.SetItemChecked(i, value);
-
-            }
-        }
-
-        private enum Time : int {
-            //contains value of selected time period in milliseconds
-
-            Secs = 1000,
-            Mins = Secs*60,
-            Hours = Mins*60
-        }
 
         public MainForm(Reddit reddit)
         {
             InitializeComponent();
 
-            TimeBox.Items.Add(Time.Secs);
-            TimeBox.Items.Add(Time.Mins);
-            TimeBox.Items.Add(Time.Hours);
-
-            TimeBox.SelectedItem = Time.Mins;
-
             this.reddit = reddit;
 
+            rand = new Random();
+
+            rk = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
+
+            currentImage = (string)rk.GetValue("Wallpaper");
+
+            //nextImage = GetNextImage();
+
+            // default subreddits
+            subredditList = new List<string> {
+                "wallpapers",
+                "wallpaper",
+                "woahdude",
+                "interestingasfuck"
+            };
+
+            images = new List<string>();
+
+            seenList = new List<string>();
+
+
+            TimeBox.Items.Add(TimeInMilliseconds.Secs);
+            TimeBox.Items.Add(TimeInMilliseconds.Mins);
+            TimeBox.Items.Add(TimeInMilliseconds.Hours);
+
+            TimeBox.SelectedItem = TimeInMilliseconds.Mins;
+
             timer.Interval = (int)TimeBox.SelectedItem * (int)Interval.Value;
-            timer.Start();
             
+            rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+
             if (rk.GetValue("WallpaperChanger") == null)
             {
                 // The value doesn't exist, the application is not set to run at startup
@@ -69,15 +82,6 @@ namespace WallpaperChanger
                 // The value exists, the application is set to run at startup
                 StartupCheckBox.Checked = true;
             }
-
-            // default subreddits
-            subredditList = new List<string> {
-                "wallpapers",
-                "wallpaper",
-                "gentlemanboners",
-                "woahdude",
-                "interestingasfuck"
-            };
 
             foreach (var subreddit in subredditList)
             {
@@ -92,9 +96,12 @@ namespace WallpaperChanger
 
         }
 
-
         public MainForm(Reddit reddit, AuthenticatedUser user) : this(reddit)
         {
+            if (user == null)
+            {
+                throw new ArgumentNullException("user");
+            }
 
             this.user = user;
 
@@ -113,6 +120,58 @@ namespace WallpaperChanger
             }
 
             CheckAllItems(true);
+        }
+
+        private void CheckAllItems(bool value)
+        {
+            for (int i = 0; i < SubsChecklist.Items.Count; ++i)
+            {
+                SubsChecklist.SetItemChecked(i, value);
+
+            }
+        }
+
+        private void PopulateImages()
+        {
+            if (RedditDirectoryRadioButton.Checked || DirectoryRadioButton.Checked)
+            {
+                if (DirectoryTextBox.Text.Length > 0)
+                {
+                    var path = DirectoryTextBox.Text;
+
+                    var dir = new DirectoryInfo(path);
+
+                    var files = dir.GetFiles("*", SearchOption.AllDirectories);
+
+                    foreach (var file in files)
+                    {
+                        images.Add(file.FullName);
+                    }
+
+                    DirectoryTextBox.Text = images.First();
+
+                }
+            }
+            if (RedditDirectoryRadioButton.Checked || RedditRadioButton.Checked)
+            {
+                // do reddit related things
+
+
+
+            }
+        }
+
+        // TO DO
+        private string GetNextImage()
+        {
+            string temp = images[rand.Next(images.Count())];
+
+            while (seenList.Contains(temp)) 
+            {
+                temp = images[rand.Next(images.Count())];
+            }
+
+            return temp;
         }
 
         private void AboutMenu_Click(object sender, EventArgs e)
@@ -135,15 +194,10 @@ namespace WallpaperChanger
 
             if (e.NewValue == CheckState.Unchecked)
             {
-
-                foreach (var listSub in subredditList)
+                if (subredditList.Contains(subName))
                 {
-                    if (listSub == subName)
-                    { 
-                        subredditList.Remove(listSub);
-                        break;
-                    }
-                }
+                    subredditList.Remove(subName);
+                }  
             }
             else if (e.NewValue == CheckState.Checked)
             {
@@ -214,7 +268,7 @@ namespace WallpaperChanger
                 }
                 else if (c is NumericUpDown)
                 {
-                    ((NumericUpDown)c).ValueChanged += new EventHandler(MyHandler);
+                    (c as NumericUpDown).ValueChanged += new EventHandler(MyHandler);
                 }
                 else if (c is RadioButton)
                 {
@@ -231,11 +285,30 @@ namespace WallpaperChanger
         {
             ApplyButton.Enabled = false;
 
+            timer.Start();
+
+            SetWallpaper();
+        }
+
+        private void SetWallpaper()
+        {
+            while (seenList.Contains(nextImage))
+            {
+                GetNextImage();
+            }
+
+            Wallpaper.Set(nextImage);
+
+            currentImage = nextImage;
+
+            seenList.Add(currentImage);
+
+            GetNextImage();
         }
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            //Wallpaper.Set()
+            SetWallpaper();
         }
 
         private void AddSubButton_Click(object sender, EventArgs e)

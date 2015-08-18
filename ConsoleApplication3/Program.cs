@@ -18,7 +18,7 @@ namespace WallpaperChanger
     public class Program
     {
         [STAThread]
-        public static void Main(string[] args)
+        public static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
