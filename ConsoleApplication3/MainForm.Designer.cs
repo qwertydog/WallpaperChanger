@@ -60,8 +60,14 @@
             this.AddSubTextBox = new System.Windows.Forms.TextBox();
             this.AddSubButton = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.NotificationMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.RestoreMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.NextWallpaperMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.Interval)).BeginInit();
             this.menuStrip1.SuspendLayout();
+            this.NotificationMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // SubsChecklist
@@ -242,6 +248,7 @@
             // DirectoryRadioButton
             // 
             this.DirectoryRadioButton.AutoSize = true;
+            this.DirectoryRadioButton.Enabled = false;
             this.DirectoryRadioButton.Location = new System.Drawing.Point(205, 146);
             this.DirectoryRadioButton.Name = "DirectoryRadioButton";
             this.DirectoryRadioButton.Size = new System.Drawing.Size(130, 17);
@@ -253,6 +260,7 @@
             // RedditDirectoryRadioButton
             // 
             this.RedditDirectoryRadioButton.AutoSize = true;
+            this.RedditDirectoryRadioButton.Enabled = false;
             this.RedditDirectoryRadioButton.Location = new System.Drawing.Point(204, 170);
             this.RedditDirectoryRadioButton.Name = "RedditDirectoryRadioButton";
             this.RedditDirectoryRadioButton.Size = new System.Drawing.Size(149, 17);
@@ -267,6 +275,7 @@
             this.DirectoryTextBox.Name = "DirectoryTextBox";
             this.DirectoryTextBox.Size = new System.Drawing.Size(192, 20);
             this.DirectoryTextBox.TabIndex = 21;
+            this.DirectoryTextBox.Leave += new System.EventHandler(this.DirectoryTextBox_Leave);
             // 
             // DirectoryLabel
             // 
@@ -313,6 +322,7 @@
             // 
             this.notifyIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.notifyIcon.BalloonTipText = "Double-Click To Open";
+            this.notifyIcon.ContextMenuStrip = this.NotificationMenuStrip;
             this.notifyIcon.Text = "notifyIcon1";
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
             // 
@@ -331,6 +341,7 @@
             this.MinimizedCheckBox.TabIndex = 26;
             this.MinimizedCheckBox.Text = "Start in tray";
             this.MinimizedCheckBox.UseVisualStyleBackColor = true;
+            this.MinimizedCheckBox.CheckedChanged += new System.EventHandler(this.MinimizedCheckBox_CheckedChanged);
             // 
             // AddSubTextBox
             // 
@@ -348,6 +359,42 @@
             this.AddSubButton.Text = "Add Sub";
             this.AddSubButton.UseVisualStyleBackColor = true;
             this.AddSubButton.Click += new System.EventHandler(this.AddSubButton_Click);
+            // 
+            // NotificationMenuStrip
+            // 
+            this.NotificationMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RestoreMenuItem,
+            this.NextWallpaperMenuItem,
+            this.toolStripSeparator1,
+            this.ExitMenuItem});
+            this.NotificationMenuStrip.Name = "NotificationMenuStrip";
+            this.NotificationMenuStrip.Size = new System.Drawing.Size(155, 98);
+            // 
+            // ExitMenuItem
+            // 
+            this.ExitMenuItem.Name = "ExitMenuItem";
+            this.ExitMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.ExitMenuItem.Text = "Exit";
+            this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(151, 6);
+            // 
+            // RestoreMenuItem
+            // 
+            this.RestoreMenuItem.Name = "RestoreMenuItem";
+            this.RestoreMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.RestoreMenuItem.Text = "Restore";
+            this.RestoreMenuItem.Click += new System.EventHandler(this.RestoreMenuItem_Click);
+            // 
+            // NextWallpaperMenuItem
+            // 
+            this.NextWallpaperMenuItem.Name = "NextWallpaperMenuItem";
+            this.NextWallpaperMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.NextWallpaperMenuItem.Text = "Next Wallpaper";
+            this.NextWallpaperMenuItem.Click += new System.EventHandler(this.NextWallpaperMenuItem_Click);
             // 
             // MainForm
             // 
@@ -390,6 +437,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.Interval)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.NotificationMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -428,5 +476,10 @@
         private System.Windows.Forms.TextBox AddSubTextBox;
         private System.Windows.Forms.Button AddSubButton;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.ContextMenuStrip NotificationMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem RestoreMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem NextWallpaperMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem ExitMenuItem;
     }
 }

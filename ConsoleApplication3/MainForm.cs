@@ -17,7 +17,6 @@ namespace WallpaperChanger
     public partial class MainForm : Form
     {
         private Reddit reddit;
-        private AuthenticatedUser user;
 
         private RegistryKey rk;
 
@@ -29,10 +28,10 @@ namespace WallpaperChanger
         private List<string> subredditList;
 
         // master list of all images
-        private List<string> images;
+        //private List<string> images;
 
         // list of images already displayed
-        private List<string> seenList;
+        //private List<string> seenList;
 
 
         public MainForm(Reddit reddit)
@@ -49,17 +48,39 @@ namespace WallpaperChanger
 
             //nextImage = GetNextImage();
 
-            // default subreddits
-            subredditList = new List<string> {
-                "wallpapers",
-                "wallpaper",
-                "woahdude",
-                "interestingasfuck"
-            };
+            if (reddit.User != null)
+            {
+                subredditList = new List<string>();
 
-            images = new List<string>();
+                foreach (var sub in reddit.User.SubscribedSubreddits)
+                {
+                    subredditList.Add(sub.Name);
+                    SubsChecklist.Items.Add(sub.Name);
+                }
 
-            seenList = new List<string>();
+
+            }
+            else
+            {
+                // default subreddits
+                subredditList = new List<string> {
+                    "wallpapers",
+                    "wallpaper",
+                    "woahdude",
+                    "interestingasfuck"
+                };
+
+                foreach (var subreddit in subredditList)
+                {
+                    SubsChecklist.Items.Add(subreddit);
+                }
+            }
+
+            
+
+            //images = new List<string>();
+
+            //seenList = new List<string>();
 
 
             TimeBox.Items.Add(TimeInMilliseconds.Secs);
@@ -83,43 +104,14 @@ namespace WallpaperChanger
                 StartupCheckBox.Checked = true;
             }
 
-            foreach (var subreddit in subredditList)
-            {
-                SubsChecklist.Items.Add(subreddit);
-            }
-
             CheckAllItems(true);
 
             AddEvents(Controls);
 
             notifyIcon.Icon = Properties.Resources.TrayIcon;
 
-        }
+            //PopulateImages();
 
-        public MainForm(Reddit reddit, AuthenticatedUser user) : this(reddit)
-        {
-            if (user == null)
-            {
-                throw new ArgumentNullException("user");
-            }
-
-            this.user = user;
-
-            subredditList = new List<string>();
-
-            SubsChecklist.Items.Clear();
-
-            foreach (var sub in user.SubscribedSubreddits)
-            {
-                subredditList.Add(sub.Name);
-            }
-
-            foreach (var sub in subredditList)
-            {
-                SubsChecklist.Items.Add(sub);
-            }
-
-            CheckAllItems(true);
         }
 
         private void CheckAllItems(bool value)
@@ -131,8 +123,9 @@ namespace WallpaperChanger
             }
         }
 
+        // TODO
         private void PopulateImages()
-        {
+        {/*
             if (RedditDirectoryRadioButton.Checked || DirectoryRadioButton.Checked)
             {
                 if (DirectoryTextBox.Text.Length > 0)
@@ -146,9 +139,11 @@ namespace WallpaperChanger
                     foreach (var file in files)
                     {
                         images.Add(file.FullName);
+                        
                     }
 
-                    DirectoryTextBox.Text = images.First();
+                    nextImage = images.ElementAt(rand.Next(0, images.Count - 1));
+                    //DirectoryTextBox.Text = images.First();
 
                 }
             }
@@ -158,12 +153,12 @@ namespace WallpaperChanger
 
 
 
-            }
+            }*/
         }
 
-        // TO DO
+        // TODO
         private string GetNextImage()
-        {
+        {/*
             string temp = images[rand.Next(images.Count())];
 
             while (seenList.Contains(temp)) 
@@ -171,7 +166,8 @@ namespace WallpaperChanger
                 temp = images[rand.Next(images.Count())];
             }
 
-            return temp;
+            return temp;*/
+            return "";
         }
 
         private void AboutMenu_Click(object sender, EventArgs e)
@@ -233,15 +229,15 @@ namespace WallpaperChanger
             {
 
                 notifyIcon.Visible = true;
-                notifyIcon.ShowBalloonTip(500);
+                notifyIcon.Text = "Reddit Wallpaper Changer";
+                notifyIcon.ShowBalloonTip(100);
                 Hide();
             }
         }
 
         private void notifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            Show();
-            WindowState = FormWindowState.Normal;
+            OpenWindow();
             
         }
 
@@ -285,13 +281,15 @@ namespace WallpaperChanger
         {
             ApplyButton.Enabled = false;
 
+            WindowState = FormWindowState.Minimized;
+
             timer.Start();
 
             SetWallpaper();
         }
 
         private void SetWallpaper()
-        {
+        {/*
             while (seenList.Contains(nextImage))
             {
                 GetNextImage();
@@ -303,7 +301,7 @@ namespace WallpaperChanger
 
             seenList.Add(currentImage);
 
-            GetNextImage();
+            GetNextImage();*/
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -311,21 +309,46 @@ namespace WallpaperChanger
             SetWallpaper();
         }
 
-        private void AddSubButton_Click(object sender, EventArgs e)
+        async private void AddSubButton_Click(object sender, EventArgs e)
         {
             if (AddSubTextBox.Text.Count() > 0)
             {
-                var sub = reddit.GetSubreddit(AddSubTextBox.Text);
+                var sub = await reddit.GetSubredditAsync(AddSubTextBox.Text);
 
                 if (sub != null)
                 {
                     subredditList.Add(sub.Name);
 
                     SubsChecklist.Items.Add(sub.Name,true);
-
-                    AddSubTextBox.Text = "";
+                } else
+                {
+                    MessageBox.Show("Invalid Subreddit");
                 }
+
+                AddSubTextBox.Text = "";
             }
+        }
+
+        private void MinimizedCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            // TODO
+        }
+
+        private void DirectoryTextBox_Leave(object sender, EventArgs e)
+        {
+            if (DirectoryTextBox.Text.Length != 0 && !Directory.Exists(DirectoryTextBox.Text))
+            { 
+                MessageBox.Show("Invalid File Path, please try again");
+                DirectoryTextBox.Text = "";
+                DirectoryRadioButton.Enabled = false;
+                RedditDirectoryRadioButton.Enabled = false;
+                RedditRadioButton.Checked = true;
+            }
+        }
+
+        private void RestoreMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenWindow();
         }
 
         private void BrowseButton_Click(object sender, EventArgs e)
@@ -333,7 +356,26 @@ namespace WallpaperChanger
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
                 DirectoryTextBox.Text = folderBrowserDialog1.SelectedPath;
+                DirectoryRadioButton.Enabled = true;
+                RedditDirectoryRadioButton.Enabled = true;
             }
+        }
+
+        private void ExitMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void NextWallpaperMenuItem_Click(object sender, EventArgs e)
+        {
+            SetWallpaper();
+        }
+
+        private void OpenWindow()
+        {
+            Show();
+            WindowState = FormWindowState.Normal;
+            notifyIcon.Visible = false;
         }
     }
 }
