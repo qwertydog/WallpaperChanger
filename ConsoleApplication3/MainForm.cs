@@ -48,7 +48,7 @@ namespace WallpaperChanger
 
             //nextImage = GetNextImage();
 
-            if (reddit.User != null)
+            if (reddit.User != null && reddit.User.SubscribedSubreddits.Count() > 0)
             {
                 subredditList = new List<string>();
 

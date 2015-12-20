@@ -157,7 +157,7 @@
             this.MaximizeBox = false;
             this.Name = "LoginForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Login";
+            this.Text = "Login To Reddit";
             this.TopMost = true;
             this.ResumeLayout(false);
             this.PerformLayout();

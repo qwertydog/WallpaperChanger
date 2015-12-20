@@ -97,6 +97,7 @@ namespace WallpaperChanger
                 CreateAccountButton.Enabled = false;
                 LoginButton.Visible = false;
                 AcceptButton = CreateAccountButton;
+                Text = "Create Reddit Account";
                 UsernameBox.Focus();
             }
             else
@@ -131,6 +132,9 @@ namespace WallpaperChanger
                 catch (NullReferenceException ex)
                 {
                     Console.WriteLine(ex);
+
+                    Cursor = Cursors.WaitCursor;
+
                     try
                     {
                         reddit.LogIn(UsernameBox.Text, PasswordBox.Text);
@@ -140,6 +144,7 @@ namespace WallpaperChanger
                     {
                         Console.WriteLine(except);
 
+                        Cursor = Cursors.Default;
                         MessageBox.Show("Please try again", "Unable To Register", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
