@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.SubsChecklist = new System.Windows.Forms.CheckedListBox();
+            this.SubsChecklistMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.RemoveMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SubsLabel = new System.Windows.Forms.Label();
             this.Interval = new System.Windows.Forms.NumericUpDown();
             this.IntervalLabel = new System.Windows.Forms.Label();
@@ -55,16 +57,17 @@
             this.ApplyButton = new System.Windows.Forms.Button();
             this.ExitButton = new System.Windows.Forms.Button();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.NotificationMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.RestoreMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.NextWallpaperMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.MinimizedCheckBox = new System.Windows.Forms.CheckBox();
             this.AddSubTextBox = new System.Windows.Forms.TextBox();
             this.AddSubButton = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.NotificationMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.RestoreMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.NextWallpaperMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SubsChecklistMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Interval)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.NotificationMenuStrip.SuspendLayout();
@@ -73,6 +76,7 @@
             // SubsChecklist
             // 
             this.SubsChecklist.CheckOnClick = true;
+            this.SubsChecklist.ContextMenuStrip = this.SubsChecklistMenuStrip;
             this.SubsChecklist.FormattingEnabled = true;
             this.SubsChecklist.HorizontalScrollbar = true;
             this.SubsChecklist.Location = new System.Drawing.Point(10, 50);
@@ -80,7 +84,21 @@
             this.SubsChecklist.Size = new System.Drawing.Size(189, 199);
             this.SubsChecklist.Sorted = true;
             this.SubsChecklist.TabIndex = 0;
-            this.SubsChecklist.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.SubsChecklist_ItemCheck);
+            this.SubsChecklist.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SubsChecklist_MouseDown);
+            // 
+            // SubsChecklistMenuStrip
+            // 
+            this.SubsChecklistMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RemoveMenuItem});
+            this.SubsChecklistMenuStrip.Name = "SubsChecklistMenuStrip";
+            this.SubsChecklistMenuStrip.Size = new System.Drawing.Size(153, 48);
+            // 
+            // RemoveMenuItem
+            // 
+            this.RemoveMenuItem.Name = "RemoveMenuItem";
+            this.RemoveMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.RemoveMenuItem.Text = "Remove";
+            this.RemoveMenuItem.Click += new System.EventHandler(this.RemoveMenuItem_Click);
             // 
             // SubsLabel
             // 
@@ -326,6 +344,42 @@
             this.notifyIcon.Text = "notifyIcon1";
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
             // 
+            // NotificationMenuStrip
+            // 
+            this.NotificationMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RestoreMenuItem,
+            this.NextWallpaperMenuItem,
+            this.toolStripSeparator1,
+            this.ExitMenuItem});
+            this.NotificationMenuStrip.Name = "NotificationMenuStrip";
+            this.NotificationMenuStrip.Size = new System.Drawing.Size(155, 76);
+            // 
+            // RestoreMenuItem
+            // 
+            this.RestoreMenuItem.Name = "RestoreMenuItem";
+            this.RestoreMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.RestoreMenuItem.Text = "Restore";
+            this.RestoreMenuItem.Click += new System.EventHandler(this.RestoreMenuItem_Click);
+            // 
+            // NextWallpaperMenuItem
+            // 
+            this.NextWallpaperMenuItem.Name = "NextWallpaperMenuItem";
+            this.NextWallpaperMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.NextWallpaperMenuItem.Text = "Next Wallpaper";
+            this.NextWallpaperMenuItem.Click += new System.EventHandler(this.NextWallpaperMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(151, 6);
+            // 
+            // ExitMenuItem
+            // 
+            this.ExitMenuItem.Name = "ExitMenuItem";
+            this.ExitMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.ExitMenuItem.Text = "Exit";
+            this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
+            // 
             // timer
             // 
             this.timer.Interval = 1000;
@@ -359,42 +413,6 @@
             this.AddSubButton.Text = "Add Sub";
             this.AddSubButton.UseVisualStyleBackColor = true;
             this.AddSubButton.Click += new System.EventHandler(this.AddSubButton_Click);
-            // 
-            // NotificationMenuStrip
-            // 
-            this.NotificationMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.RestoreMenuItem,
-            this.NextWallpaperMenuItem,
-            this.toolStripSeparator1,
-            this.ExitMenuItem});
-            this.NotificationMenuStrip.Name = "NotificationMenuStrip";
-            this.NotificationMenuStrip.Size = new System.Drawing.Size(155, 98);
-            // 
-            // ExitMenuItem
-            // 
-            this.ExitMenuItem.Name = "ExitMenuItem";
-            this.ExitMenuItem.Size = new System.Drawing.Size(154, 22);
-            this.ExitMenuItem.Text = "Exit";
-            this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(151, 6);
-            // 
-            // RestoreMenuItem
-            // 
-            this.RestoreMenuItem.Name = "RestoreMenuItem";
-            this.RestoreMenuItem.Size = new System.Drawing.Size(154, 22);
-            this.RestoreMenuItem.Text = "Restore";
-            this.RestoreMenuItem.Click += new System.EventHandler(this.RestoreMenuItem_Click);
-            // 
-            // NextWallpaperMenuItem
-            // 
-            this.NextWallpaperMenuItem.Name = "NextWallpaperMenuItem";
-            this.NextWallpaperMenuItem.Size = new System.Drawing.Size(154, 22);
-            this.NextWallpaperMenuItem.Text = "Next Wallpaper";
-            this.NextWallpaperMenuItem.Click += new System.EventHandler(this.NextWallpaperMenuItem_Click);
             // 
             // MainForm
             // 
@@ -434,6 +452,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Reddit Wallpaper Changer";
             this.Resize += new System.EventHandler(this.MainForm_Resize);
+            this.SubsChecklistMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.Interval)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -481,5 +500,7 @@
         private System.Windows.Forms.ToolStripMenuItem NextWallpaperMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem ExitMenuItem;
+        private System.Windows.Forms.ContextMenuStrip SubsChecklistMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem RemoveMenuItem;
     }
 }

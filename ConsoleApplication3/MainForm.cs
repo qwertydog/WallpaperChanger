@@ -74,9 +74,7 @@ namespace WallpaperChanger
                 {
                     SubsChecklist.Items.Add(subreddit);
                 }
-            }
-
-            
+            }            
 
             //images = new List<string>();
 
@@ -181,7 +179,8 @@ namespace WallpaperChanger
                 (SubsChecklist.CheckedItems.Count + 1) == SubsChecklist.Items.Count)
             {
                 AllCheckbox.Checked = true;
-            } else
+            } 
+            else
             {
                 AllCheckbox.Checked = false;
             }
@@ -369,6 +368,23 @@ namespace WallpaperChanger
         private void NextWallpaperMenuItem_Click(object sender, EventArgs e)
         {
             SetWallpaper();
+        }
+
+        private void SubsChecklist_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var selectedItem = SubsChecklist.IndexFromPoint(e.Location);
+
+                SubsChecklist.SelectedIndex = selectedItem;
+            }
+        }
+
+        private void RemoveMenuItem_Click(object sender, EventArgs e)
+        {
+            subredditList.Remove(SubsChecklist.SelectedItem.ToString());
+            SubsChecklist.Items.Remove(SubsChecklist.SelectedItem);
+            
         }
 
         private void OpenWindow()
