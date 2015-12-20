@@ -91,7 +91,7 @@
             this.SubsChecklistMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.RemoveMenuItem});
             this.SubsChecklistMenuStrip.Name = "SubsChecklistMenuStrip";
-            this.SubsChecklistMenuStrip.Size = new System.Drawing.Size(153, 48);
+            this.SubsChecklistMenuStrip.Size = new System.Drawing.Size(118, 26);
             // 
             // RemoveMenuItem
             // 

@@ -310,22 +310,20 @@ namespace WallpaperChanger
 
         async private void AddSubButton_Click(object sender, EventArgs e)
         {
-            if (AddSubTextBox.Text.Count() > 0)
+            if (AddSubTextBox.Text.Count() > 0 && !subredditList.Contains(AddSubTextBox.Text))
             {
                 var sub = await reddit.GetSubredditAsync(AddSubTextBox.Text);
 
                 if (sub != null)
                 {
                     subredditList.Add(sub.Name);
-
                     SubsChecklist.Items.Add(sub.Name,true);
                 } else
                 {
                     MessageBox.Show("Invalid Subreddit");
                 }
-
-                AddSubTextBox.Text = "";
             }
+            AddSubTextBox.Text = "";
         }
 
         private void MinimizedCheckBox_CheckedChanged(object sender, EventArgs e)
