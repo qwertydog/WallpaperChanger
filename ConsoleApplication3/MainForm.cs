@@ -125,7 +125,6 @@ namespace WallpaperChanger
             }
         }
 
-        // TODO
         private void PopulateImages()
         {
             if (RedditDirectoryRadioButton.Checked || DirectoryRadioButton.Checked)
@@ -137,13 +136,11 @@ namespace WallpaperChanger
                     var dir = new DirectoryInfo(path);
 
                     var files = Directory.EnumerateFiles(DirectoryTextBox.Text, "*.*", SearchOption.AllDirectories)
-                        .Where(s => s.ToLower().EndsWith(".bmp") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".png"));
+                        .Where(s => s.ToLower().EndsWith(".bmp") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".png"));
 
                     imagePaths.AddRange(files);
 
-                    nextImage = @imagePaths.ElementAt(rand.Next(0, imagePaths.Count - 1));
-                    //DirectoryTextBox.Text = images.First();
-
+                    nextImage = GetNextImage();
                 }
             }
             if (RedditDirectoryRadioButton.Checked || RedditRadioButton.Checked)
@@ -155,18 +152,28 @@ namespace WallpaperChanger
             }
         }
 
-        // TODO
         private string GetNextImage()
-        {/*
-            string temp = images[rand.Next(images.Count())];
-
-            while (seenList.Contains(temp)) 
+        {
+            while (imagePaths.Count > 0)
             {
-                temp = images[rand.Next(images.Count())];
+                var filePath = imagePaths.ElementAt(rand.Next(imagePaths.Count));
+
+                if (@filePath == currentImage) continue;
+
+                var image = Image.FromFile(@filePath);
+
+                if (image.Width >= Convert.ToInt32(minWidthTextBox.Text) && image.Width <= Convert.ToInt32(maxWidthTextBox.Text))
+                {
+                    if (image.Height >= Convert.ToInt32(minHeightTextBox.Text) && image.Height <= Convert.ToInt32(maxHeightTextBox.Text))
+                    {
+                        return @filePath;
+                    }
+                }
+
+                imagePaths.Remove(filePath);
             }
 
-            return temp;*/
-            return "";
+            return String.Empty;
         }
 
         private void AboutMenu_Click(object sender, EventArgs e)
@@ -281,9 +288,7 @@ namespace WallpaperChanger
         {
             ApplyButton.Enabled = false;
 
-            WindowState = FormWindowState.Minimized;
-
-            timer.Start();
+            //WindowState = FormWindowState.Minimized;
 
             PopulateImages();
 
@@ -297,13 +302,15 @@ namespace WallpaperChanger
                 GetNextImage();
             }*/
 
+            timer.Start();
+
             Wallpaper.Set(nextImage);
-            /*
+
             currentImage = nextImage;
 
-            seenList.Add(currentImage);
+            nextImage = GetNextImage();
 
-            GetNextImage();*/
+            //seenList.Add(currentImage);
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -376,7 +383,6 @@ namespace WallpaperChanger
             if (e.Button == MouseButtons.Right)
             {
                 var selectedItem = SubsChecklist.IndexFromPoint(e.Location);
-
                 SubsChecklist.SelectedIndex = selectedItem;
             }
         }
@@ -386,6 +392,67 @@ namespace WallpaperChanger
             subredditList.Remove(SubsChecklist.SelectedItem.ToString());
             SubsChecklist.Items.Remove(SubsChecklist.SelectedItem);
             
+        }
+
+        private void Interval_ValueChanged(object sender, EventArgs e)
+        {
+            timer.Interval = GetTimerInterval();
+        }
+
+        private int GetTimerInterval()
+        {
+            return Convert.ToInt32(Interval.Value) * Convert.ToInt32(TimeBox.SelectedItem);
+        }
+
+        private void TimeBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            timer.Interval = GetTimerInterval();
+        }
+
+        private void ValidateSizeTextBoxes(TextBox sender)
+        {
+            if (sender.Name.StartsWith("min"))
+            {
+                if (Convert.ToInt32(maxWidthTextBox.Text) < Convert.ToInt32(minWidthTextBox.Text))
+                {
+                    maxWidthTextBox.Text = (Convert.ToInt32(minWidthTextBox.Text) + 1).ToString();
+                }
+                if (Convert.ToInt32(maxHeightTextBox.Text) < Convert.ToInt32(minHeightTextBox.Text))
+                {
+                    maxHeightTextBox.Text = (Convert.ToInt32(minHeightTextBox.Text) + 1).ToString();
+                }
+            }
+            else
+            {
+                if (Convert.ToInt32(maxWidthTextBox.Text) < Convert.ToInt32(minWidthTextBox.Text))
+                {
+                    minWidthTextBox.Text = (Convert.ToInt32(maxWidthTextBox.Text) - 1).ToString();
+                }
+                if (Convert.ToInt32(maxHeightTextBox.Text) < Convert.ToInt32(minHeightTextBox.Text))
+                {
+                    minHeightTextBox.Text = (Convert.ToInt32(maxHeightTextBox.Text) - 1).ToString();
+                }
+            }
+        }
+
+        private void minWidthTextBox_Leave(object sender, EventArgs e)
+        {
+            ValidateSizeTextBoxes((TextBox)sender);
+        }
+
+        private void minHeightTextBox_Leave(object sender, EventArgs e)
+        {
+            ValidateSizeTextBoxes((TextBox)sender);
+        }
+
+        private void maxWidthTextBox_Leave(object sender, EventArgs e)
+        {
+            ValidateSizeTextBoxes((TextBox)sender);
+        }
+
+        private void maxHeightTextBox_Leave(object sender, EventArgs e)
+        {
+            ValidateSizeTextBoxes((TextBox)sender);
         }
 
         private void OpenWindow()

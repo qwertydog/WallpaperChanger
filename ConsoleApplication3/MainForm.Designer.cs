@@ -35,12 +35,12 @@
             this.SubsLabel = new System.Windows.Forms.Label();
             this.Interval = new System.Windows.Forms.NumericUpDown();
             this.IntervalLabel = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.minWidthTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.maxWidthTextBox = new System.Windows.Forms.TextBox();
+            this.maxHeightTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.minHeightTextBox = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.AboutMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.AllCheckbox = new System.Windows.Forms.CheckBox();
@@ -103,15 +103,25 @@
             // SubsLabel
             // 
             this.SubsLabel.AutoSize = true;
-            this.SubsLabel.Location = new System.Drawing.Point(37, 34);
+            this.SubsLabel.Location = new System.Drawing.Point(33, 35);
             this.SubsLabel.Name = "SubsLabel";
-            this.SubsLabel.Size = new System.Drawing.Size(57, 13);
+            this.SubsLabel.Size = new System.Drawing.Size(166, 13);
             this.SubsLabel.TabIndex = 1;
-            this.SubsLabel.Text = "Subreddits";
+            this.SubsLabel.Text = "Subreddits - Right click to remove";
             // 
             // Interval
             // 
             this.Interval.Location = new System.Drawing.Point(331, 31);
+            this.Interval.Maximum = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+            this.Interval.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.Interval.Name = "Interval";
             this.Interval.Size = new System.Drawing.Size(36, 20);
             this.Interval.TabIndex = 2;
@@ -120,23 +130,25 @@
             0,
             0,
             0});
+            this.Interval.ValueChanged += new System.EventHandler(this.Interval_ValueChanged);
             // 
             // IntervalLabel
             // 
             this.IntervalLabel.AutoSize = true;
-            this.IntervalLabel.Location = new System.Drawing.Point(191, 34);
+            this.IntervalLabel.Location = new System.Drawing.Point(205, 33);
             this.IntervalLabel.Name = "IntervalLabel";
-            this.IntervalLabel.Size = new System.Drawing.Size(134, 13);
+            this.IntervalLabel.Size = new System.Drawing.Size(123, 13);
             this.IntervalLabel.TabIndex = 3;
-            this.IntervalLabel.Text = "Time before next wallpaper";
+            this.IntervalLabel.Text = "Time until next wallpaper";
             // 
-            // textBox1
+            // minWidthTextBox
             // 
-            this.textBox1.Location = new System.Drawing.Point(205, 70);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(56, 20);
-            this.textBox1.TabIndex = 6;
-            this.textBox1.Text = "1920";
+            this.minWidthTextBox.Location = new System.Drawing.Point(205, 70);
+            this.minWidthTextBox.Name = "minWidthTextBox";
+            this.minWidthTextBox.Size = new System.Drawing.Size(56, 20);
+            this.minWidthTextBox.TabIndex = 6;
+            this.minWidthTextBox.Text = "1920";
+            this.minWidthTextBox.Leave += new System.EventHandler(this.minWidthTextBox_Leave);
             // 
             // label1
             // 
@@ -147,21 +159,23 @@
             this.label1.TabIndex = 7;
             this.label1.Text = "Horizontal Size";
             // 
-            // textBox2
+            // maxWidthTextBox
             // 
-            this.textBox2.Location = new System.Drawing.Point(368, 70);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(56, 20);
-            this.textBox2.TabIndex = 8;
-            this.textBox2.Text = "1920";
+            this.maxWidthTextBox.Location = new System.Drawing.Point(368, 70);
+            this.maxWidthTextBox.Name = "maxWidthTextBox";
+            this.maxWidthTextBox.Size = new System.Drawing.Size(56, 20);
+            this.maxWidthTextBox.TabIndex = 8;
+            this.maxWidthTextBox.Text = "1920";
+            this.maxWidthTextBox.Leave += new System.EventHandler(this.maxWidthTextBox_Leave);
             // 
-            // textBox3
+            // maxHeightTextBox
             // 
-            this.textBox3.Location = new System.Drawing.Point(369, 96);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(56, 20);
-            this.textBox3.TabIndex = 11;
-            this.textBox3.Text = "1080";
+            this.maxHeightTextBox.Location = new System.Drawing.Point(369, 96);
+            this.maxHeightTextBox.Name = "maxHeightTextBox";
+            this.maxHeightTextBox.Size = new System.Drawing.Size(56, 20);
+            this.maxHeightTextBox.TabIndex = 11;
+            this.maxHeightTextBox.Text = "1080";
+            this.maxHeightTextBox.Leave += new System.EventHandler(this.maxHeightTextBox_Leave);
             // 
             // label2
             // 
@@ -172,13 +186,14 @@
             this.label2.TabIndex = 10;
             this.label2.Text = "Vertical Size";
             // 
-            // textBox4
+            // minHeightTextBox
             // 
-            this.textBox4.Location = new System.Drawing.Point(205, 96);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(56, 20);
-            this.textBox4.TabIndex = 9;
-            this.textBox4.Text = "1080";
+            this.minHeightTextBox.Location = new System.Drawing.Point(205, 96);
+            this.minHeightTextBox.Name = "minHeightTextBox";
+            this.minHeightTextBox.Size = new System.Drawing.Size(56, 20);
+            this.minHeightTextBox.TabIndex = 9;
+            this.minHeightTextBox.Text = "1080";
+            this.minHeightTextBox.Leave += new System.EventHandler(this.minHeightTextBox_Leave);
             // 
             // menuStrip1
             // 
@@ -236,6 +251,7 @@
             this.TimeBox.Name = "TimeBox";
             this.TimeBox.Size = new System.Drawing.Size(53, 21);
             this.TimeBox.TabIndex = 16;
+            this.TimeBox.SelectedIndexChanged += new System.EventHandler(this.TimeBox_SelectedIndexChanged);
             // 
             // StartupCheckBox
             // 
@@ -395,6 +411,7 @@
             this.MinimizedCheckBox.TabIndex = 26;
             this.MinimizedCheckBox.Text = "Start in tray";
             this.MinimizedCheckBox.UseVisualStyleBackColor = true;
+            this.MinimizedCheckBox.Visible = false;
             this.MinimizedCheckBox.CheckedChanged += new System.EventHandler(this.MinimizedCheckBox_CheckedChanged);
             // 
             // AddSubTextBox
@@ -434,12 +451,12 @@
             this.Controls.Add(this.MaxLabel);
             this.Controls.Add(this.MinLabel);
             this.Controls.Add(this.AllCheckbox);
-            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.maxHeightTextBox);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.minHeightTextBox);
+            this.Controls.Add(this.maxWidthTextBox);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.minWidthTextBox);
             this.Controls.Add(this.IntervalLabel);
             this.Controls.Add(this.Interval);
             this.Controls.Add(this.SubsLabel);
@@ -468,12 +485,12 @@
         private System.Windows.Forms.Label SubsLabel;
         private System.Windows.Forms.NumericUpDown Interval;
         private System.Windows.Forms.Label IntervalLabel;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox minWidthTextBox;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox maxWidthTextBox;
+        private System.Windows.Forms.TextBox maxHeightTextBox;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox minHeightTextBox;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem AboutMenu;
         private System.Windows.Forms.CheckBox AllCheckbox;
