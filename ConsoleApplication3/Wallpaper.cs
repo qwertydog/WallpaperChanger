@@ -31,13 +31,13 @@ namespace WallpaperChanger
             Stretched
         }
 
-        public static void Set(String path)
+        public static void Set(string path)
         {
             Set(path, Style.Centered);
         }
 
 
-        public static void Set(String path, Style style)
+        public static void Set(string path, Style style)
         {
             if (path == null)
             {

@@ -96,7 +96,7 @@
             // RemoveMenuItem
             // 
             this.RemoveMenuItem.Name = "RemoveMenuItem";
-            this.RemoveMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.RemoveMenuItem.Size = new System.Drawing.Size(117, 22);
             this.RemoveMenuItem.Text = "Remove";
             this.RemoveMenuItem.Click += new System.EventHandler(this.RemoveMenuItem_Click);
             // 

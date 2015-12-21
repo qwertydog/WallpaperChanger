@@ -28,7 +28,7 @@ namespace WallpaperChanger
         private List<string> subredditList;
 
         // master list of all images
-        //private List<string> images;
+        private List<string> imagePaths;
 
         // list of images already displayed
         //private List<string> seenList;
@@ -38,6 +38,8 @@ namespace WallpaperChanger
         {
             InitializeComponent();
 
+            FormClosing += (s, args) => notifyIcon.Visible = false;
+
             this.reddit = reddit;
 
             rand = new Random();
@@ -45,6 +47,8 @@ namespace WallpaperChanger
             rk = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
 
             currentImage = (string)rk.GetValue("Wallpaper");
+
+            imagePaths = new List<string>();
 
             //nextImage = GetNextImage();
 
@@ -108,7 +112,7 @@ namespace WallpaperChanger
 
             notifyIcon.Icon = Properties.Resources.TrayIcon;
 
-            //PopulateImages();
+            PopulateImages();
 
         }
 
@@ -123,7 +127,7 @@ namespace WallpaperChanger
 
         // TODO
         private void PopulateImages()
-        {/*
+        {
             if (RedditDirectoryRadioButton.Checked || DirectoryRadioButton.Checked)
             {
                 if (DirectoryTextBox.Text.Length > 0)
@@ -132,15 +136,12 @@ namespace WallpaperChanger
 
                     var dir = new DirectoryInfo(path);
 
-                    var files = dir.GetFiles("*", SearchOption.AllDirectories);
+                    var files = Directory.EnumerateFiles(DirectoryTextBox.Text, "*.*", SearchOption.AllDirectories)
+                        .Where(s => s.ToLower().EndsWith(".bmp") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".png"));
 
-                    foreach (var file in files)
-                    {
-                        images.Add(file.FullName);
-                        
-                    }
+                    imagePaths.AddRange(files);
 
-                    nextImage = images.ElementAt(rand.Next(0, images.Count - 1));
+                    nextImage = @imagePaths.ElementAt(rand.Next(0, imagePaths.Count - 1));
                     //DirectoryTextBox.Text = images.First();
 
                 }
@@ -151,7 +152,7 @@ namespace WallpaperChanger
 
 
 
-            }*/
+            }
         }
 
         // TODO
@@ -284,6 +285,8 @@ namespace WallpaperChanger
 
             timer.Start();
 
+            PopulateImages();
+
             SetWallpaper();
         }
 
@@ -292,10 +295,10 @@ namespace WallpaperChanger
             while (seenList.Contains(nextImage))
             {
                 GetNextImage();
-            }
+            }*/
 
             Wallpaper.Set(nextImage);
-
+            /*
             currentImage = nextImage;
 
             seenList.Add(currentImage);
