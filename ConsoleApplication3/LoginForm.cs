@@ -51,7 +51,7 @@ namespace WallpaperChanger
 
         private void LoginButton_Click(object sender, EventArgs e)
         {
-            if (UsernameBox.Text.Length == 0 && PasswordBox.Text.Length == 0)
+            if (!UsernameBox.Text.Any() && !PasswordBox.Text.Any())
             {
                 UsernameBox.Visible = true;
                 PasswordBox.Visible = true;
@@ -85,7 +85,7 @@ namespace WallpaperChanger
 
         private void CreateAccountButton_Click(object sender, EventArgs e)
         {
-            if (UsernameBox.Text.Length == 0 && PasswordBox.Text.Length == 0)
+            if (!UsernameBox.Text.Any() && !PasswordBox.Text.Any())
             {
                 UsernameBox.Visible = true;
                 PasswordBox.Visible = true;
@@ -102,7 +102,7 @@ namespace WallpaperChanger
             }
             else
             {
-                if (EmailBox.Text.Length != 0)
+                if (EmailBox.Text.Any())
                 {
                     try
                     {
@@ -112,11 +112,11 @@ namespace WallpaperChanger
                     {
                         Console.WriteLine(ex);
 
-                        var dialogResult = MessageBox.Show("Press OK to continue without using an email address or Cancel to edit", "Invalid Email Format", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+                        var dialogResult = MessageBox.Show("Invalid Email Format\nPress OK to continue without using an email address or Cancel to edit", "Invalid Email Format", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
 
                         if (dialogResult == DialogResult.OK)
                         {
-                            EmailBox.Text = "";
+                            EmailBox.Text = string.Empty;
 
                         } else if (dialogResult == DialogResult.Cancel)
                         {
@@ -163,7 +163,7 @@ namespace WallpaperChanger
 
         private void TextBoxChanged()
         {
-            if (UsernameBox.Text.Length == 0 || PasswordBox.Text.Length == 0)
+            if (!UsernameBox.Text.Any() || !PasswordBox.Text.Any())
             {
                 LoginButton.Enabled = false;
                 CreateAccountButton.Enabled = false;

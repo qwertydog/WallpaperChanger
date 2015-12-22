@@ -52,7 +52,7 @@ namespace WallpaperChanger
 
             //nextImage = GetNextImage();
 
-            if (reddit.User != null && reddit.User.SubscribedSubreddits.Count() > 0)
+            if (reddit.User != null && reddit.User.SubscribedSubreddits.Any())
             {
                 subredditList = new List<string>();
 
@@ -61,7 +61,6 @@ namespace WallpaperChanger
                     subredditList.Add(sub.Name);
                     SubsChecklist.Items.Add(sub.Name);
                 }
-
 
             }
             else
@@ -129,7 +128,7 @@ namespace WallpaperChanger
         {
             if (RedditDirectoryRadioButton.Checked || DirectoryRadioButton.Checked)
             {
-                if (DirectoryTextBox.Text.Length > 0)
+                if (DirectoryTextBox.Text.Any())
                 {
                     var path = DirectoryTextBox.Text;
 
@@ -154,7 +153,7 @@ namespace WallpaperChanger
 
         private string GetNextImage()
         {
-            while (imagePaths.Count > 0)
+            while (imagePaths.Any())
             {
                 var filePath = imagePaths.ElementAt(rand.Next(imagePaths.Count));
 
@@ -302,13 +301,23 @@ namespace WallpaperChanger
                 GetNextImage();
             }*/
 
-            timer.Start();
+            try
+            {
+                Wallpaper.Set(nextImage);
 
-            Wallpaper.Set(nextImage);
+                timer.Start();
 
-            currentImage = nextImage;
+                currentImage = nextImage;
 
-            nextImage = GetNextImage();
+                nextImage = GetNextImage();
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine(ex);
+                MessageBox.Show("Check that the selected folder and subreddits contain images the correct size", "No matching images found");
+            }
+
+            
 
             //seenList.Add(currentImage);
         }
@@ -320,7 +329,7 @@ namespace WallpaperChanger
 
         async private void AddSubButton_Click(object sender, EventArgs e)
         {
-            if (AddSubTextBox.Text.Count() > 0 && !subredditList.Contains(AddSubTextBox.Text))
+            if (AddSubTextBox.Text.Any() && !subredditList.Contains(AddSubTextBox.Text))
             {
                 var sub = await reddit.GetSubredditAsync(AddSubTextBox.Text);
 
@@ -330,10 +339,10 @@ namespace WallpaperChanger
                     SubsChecklist.Items.Add(sub.Name,true);
                 } else
                 {
-                    MessageBox.Show("Invalid Subreddit");
+                    MessageBox.Show("Subreddit doesn't exist  :(");
                 }
             }
-            AddSubTextBox.Text = "";
+            AddSubTextBox.Text = string.Empty;
         }
 
         private void MinimizedCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -343,10 +352,10 @@ namespace WallpaperChanger
 
         private void DirectoryTextBox_Leave(object sender, EventArgs e)
         {
-            if (DirectoryTextBox.Text.Length != 0 && !Directory.Exists(DirectoryTextBox.Text))
+            if (DirectoryTextBox.Text.Any() && !Directory.Exists(DirectoryTextBox.Text))
             { 
                 MessageBox.Show("Invalid File Path, please try again");
-                DirectoryTextBox.Text = "";
+                DirectoryTextBox.Text = string.Empty;
                 DirectoryRadioButton.Enabled = false;
                 RedditDirectoryRadioButton.Enabled = false;
                 RedditRadioButton.Checked = true;
