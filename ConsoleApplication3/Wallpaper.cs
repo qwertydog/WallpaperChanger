@@ -15,14 +15,11 @@ namespace WallpaperChanger
 
     public sealed class Wallpaper
     {
-        Wallpaper() { }
-
         const int SPI_SETDESKWALLPAPER = 20;
         const int SPIF_UPDATEINIFILE = 0x01;
         const int SPIF_SENDWININICHANGE = 0x02;
 
-        
-        
+        Wallpaper() { }
 
         public enum Style : int
         {
@@ -43,10 +40,6 @@ namespace WallpaperChanger
             {
                 throw new ArgumentNullException("path");
             }
-            
-            //System.Drawing.Image img = System.Drawing.Image.FromStream(s);
-            //string tempPath = Path.Combine(Path.GetTempPath(), "wallpaper.bmp");
-            //img.Save(tempPath, System.Drawing.Imaging.ImageFormat.Bmp);
 
             RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
 
