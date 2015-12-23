@@ -1,25 +1,18 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using System.IO;
-using System.Security;
-using Microsoft.Win32;
-
-namespace WallpaperChanger
+﻿namespace WallpaperChanger
 {
-    [SuppressUnmanagedCodeSecurityAttribute]
-    internal static class NativeMethods
-    {
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        internal static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
-    }
+	using System;
+	using System.IO;
+	using Microsoft.Win32;
 
     public sealed class Wallpaper
     {
-        const int SPI_SETDESKWALLPAPER = 20;
-        const int SPIF_UPDATEINIFILE = 0x01;
-        const int SPIF_SENDWININICHANGE = 0x02;
+        private const int SPISETDESKWALLPAPER = 20;
+        private const int SPIFUPDATEINIFILE = 0x01;
+        private const int SPIFSENDWININICHANGE = 0x02;
 
-        Wallpaper() { }
+        private Wallpaper() 
+        {
+        }
 
         public enum Style : int
         {
@@ -32,7 +25,6 @@ namespace WallpaperChanger
         {
             Set(path, Style.Centered);
         }
-
 
         public static void Set(string path, Style style)
         {
@@ -61,11 +53,11 @@ namespace WallpaperChanger
                 key.SetValue(@"TileWallpaper", 1.ToString());
             }
 
-            NativeMethods.SystemParametersInfo(SPI_SETDESKWALLPAPER,
+            NativeMethods.SystemParametersInfo(
+            	SPISETDESKWALLPAPER,
                 0,
                 path,
-                SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
-
+                SPIFUPDATEINIFILE | SPIFSENDWININICHANGE);
         }
 
         public static void Set(Uri uri)
@@ -105,10 +97,11 @@ namespace WallpaperChanger
                 key.SetValue(@"TileWallpaper", 1.ToString());
             }
 
-            NativeMethods.SystemParametersInfo(SPI_SETDESKWALLPAPER,
+            NativeMethods.SystemParametersInfo(
+            	SPISETDESKWALLPAPER,
                 0,
                 tempPath,
-                SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
+                SPIFUPDATEINIFILE | SPIFSENDWININICHANGE);
 
             s.Dispose();
         }
