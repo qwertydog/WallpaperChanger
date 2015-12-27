@@ -1,19 +1,19 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Win32;
-using System.Windows.Forms;
-using RedditSharp;
-using RedditSharp.Things;
-
-namespace WallpaperChanger
+﻿namespace WallpaperChanger
 {
+	using System;
+	using System.Collections.Generic;
+	using System.ComponentModel;
+	using System.Data;
+	using System.Drawing;
+	using System.IO;
+	using System.Linq;
+	using System.Text;
+	using System.Threading.Tasks;
+	using System.Windows.Forms;
+	using Microsoft.Win32;
+	using RedditSharp;
+	using RedditSharp.Things;
+	
     public partial class MainForm : Form
     {
         private Reddit reddit;
@@ -31,14 +31,13 @@ namespace WallpaperChanger
         private List<string> imagePaths;
 
         // list of images already displayed
-        //private List<string> seenList;
-
+        ////private List<string> seenList;
 
         public MainForm(Reddit reddit)
         {
             InitializeComponent();
 
-            FormClosing += (s, args) => notifyIcon.Visible = false;
+            FormClosing += (s, args) => NotifyIcon1.Visible = false;
 
             this.reddit = reddit;
 
@@ -50,7 +49,7 @@ namespace WallpaperChanger
 
             imagePaths = new List<string>();
 
-            //nextImage = GetNextImage();
+            ////nextImage = GetNextImage();
 
             if (reddit.User != null && reddit.User.SubscribedSubreddits.Any())
             {
@@ -61,12 +60,12 @@ namespace WallpaperChanger
                     subredditList.Add(sub.Name);
                     SubsChecklist.Items.Add(sub.Name);
                 }
-
             }
             else
             {
                 // default subreddits
-                subredditList = new List<string> {
+                subredditList = new List<string> 
+                {
                     "wallpapers",
                     "wallpaper",
                     "woahdude",
@@ -79,10 +78,9 @@ namespace WallpaperChanger
                 }
             }            
 
-            //images = new List<string>();
+            ////images = new List<string>();
 
-            //seenList = new List<string>();
-
+            ////seenList = new List<string>();
 
             TimeBox.Items.Add(TimeInMilliseconds.Secs);
             TimeBox.Items.Add(TimeInMilliseconds.Mins);
@@ -90,7 +88,7 @@ namespace WallpaperChanger
 
             TimeBox.SelectedItem = TimeInMilliseconds.Mins;
 
-            timer.Interval = (int)TimeBox.SelectedItem * (int)Interval.Value;
+            Timer1.Interval = (int)TimeBox.SelectedItem * (int)Interval.Value;
             
             rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
@@ -109,10 +107,9 @@ namespace WallpaperChanger
 
             AddEvents(Controls);
 
-            notifyIcon.Icon = Properties.Resources.TrayIcon;
+            NotifyIcon1.Icon = Properties.Resources.TrayIcon;
 
             PopulateImages();
-
         }
 
         private void CheckAllItems(bool value)
@@ -120,7 +117,6 @@ namespace WallpaperChanger
             for (int i = 0; i < SubsChecklist.Items.Count; ++i)
             {
                 SubsChecklist.SetItemChecked(i, value);
-
             }
         }
 
@@ -142,12 +138,10 @@ namespace WallpaperChanger
                     nextImage = GetNextImage();
                 }
             }
+            
             if (RedditDirectoryRadioButton.Checked || RedditRadioButton.Checked)
             {
                 // do reddit related things
-
-
-
             }
         }
 
@@ -157,13 +151,16 @@ namespace WallpaperChanger
             {
                 var filePath = imagePaths.ElementAt(rand.Next(imagePaths.Count));
 
-                if (@filePath == currentImage) continue;
+                if (@filePath == currentImage)
+                {
+                	continue;
+                }
 
                 var image = Image.FromFile(@filePath);
 
-                if (image.Width >= Convert.ToInt32(minWidthTextBox.Text) && image.Width <= Convert.ToInt32(maxWidthTextBox.Text))
+                if (image.Width >= Convert.ToInt32(MinWidthTextBox.Text) && image.Width <= Convert.ToInt32(MaxWidthTextBox.Text))
                 {
-                    if (image.Height >= Convert.ToInt32(minHeightTextBox.Text) && image.Height <= Convert.ToInt32(maxHeightTextBox.Text))
+                    if (image.Height >= Convert.ToInt32(MinHeightTextBox.Text) && image.Height <= Convert.ToInt32(MaxHeightTextBox.Text))
                     {
                         return @filePath;
                     }
@@ -172,7 +169,7 @@ namespace WallpaperChanger
                 imagePaths.Remove(filePath);
             }
 
-            return String.Empty;
+            return string.Empty;
         }
 
         private void AboutMenu_Click(object sender, EventArgs e)
@@ -203,7 +200,10 @@ namespace WallpaperChanger
             }
             else if (e.NewValue == CheckState.Checked)
             {
-                if (!subredditList.Contains(subName)) subredditList.Add(subName);
+            	if (!subredditList.Contains(subName))
+            	{
+            		subredditList.Add(subName);
+            	}
             }
         }
 
@@ -233,18 +233,16 @@ namespace WallpaperChanger
         {
             if (FormWindowState.Minimized == WindowState)
             {
-
-                notifyIcon.Visible = true;
-                notifyIcon.Text = "Reddit Wallpaper Changer";
-                notifyIcon.ShowBalloonTip(100);
+                NotifyIcon1.Visible = true;
+                NotifyIcon1.Text = "Reddit Wallpaper Changer";
+                NotifyIcon1.ShowBalloonTip(100);
                 Hide();
             }
         }
 
-        private void notifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void NotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            OpenWindow();
-            
+            OpenWindow();   
         }
 
         private void MyHandler(object obj, EventArgs e)
@@ -252,9 +250,9 @@ namespace WallpaperChanger
             ApplyButton.Enabled = true;
         }
 
-        private void AddEvents(Control.ControlCollection Controls)
+        private void AddEvents(Control.ControlCollection controls)
         {
-            foreach (Control c in Controls)
+            foreach (Control c in controls)
             {
                 if (c is CheckBox)
                 {
@@ -287,7 +285,7 @@ namespace WallpaperChanger
         {
             ApplyButton.Enabled = false;
 
-            //WindowState = FormWindowState.Minimized;
+            ////WindowState = FormWindowState.Minimized;
 
             PopulateImages();
 
@@ -295,7 +293,8 @@ namespace WallpaperChanger
         }
 
         private void SetWallpaper()
-        {/*
+        {
+        	/*
             while (seenList.Contains(nextImage))
             {
                 GetNextImage();
@@ -305,7 +304,7 @@ namespace WallpaperChanger
             {
                 Wallpaper.Set(nextImage);
 
-                timer.Start();
+                Timer1.Start();
 
                 currentImage = nextImage;
 
@@ -316,18 +315,16 @@ namespace WallpaperChanger
                 Console.WriteLine(ex);
                 MessageBox.Show("Check that the selected folder and subreddits contain images the correct size", "No matching images found");
             }
-
             
-
-            //seenList.Add(currentImage);
+            ////seenList.Add(currentImage);
         }
 
-        private void timer_Tick(object sender, EventArgs e)
+        private void Timer_Tick(object sender, EventArgs e)
         {
             SetWallpaper();
         }
 
-        async private void AddSubButton_Click(object sender, EventArgs e)
+        private async void AddSubButton_Click(object sender, EventArgs e)
         {
             if (AddSubTextBox.Text.Any() && !subredditList.Contains(AddSubTextBox.Text))
             {
@@ -336,12 +333,14 @@ namespace WallpaperChanger
                 if (sub != null)
                 {
                     subredditList.Add(sub.Name);
-                    SubsChecklist.Items.Add(sub.Name,true);
-                } else
+                    SubsChecklist.Items.Add(sub.Name, true);
+                }
+                else
                 {
                     MessageBox.Show("Subreddit doesn't exist  :(");
                 }
             }
+            
             AddSubTextBox.Text = string.Empty;
         }
 
@@ -400,12 +399,11 @@ namespace WallpaperChanger
         {
             subredditList.Remove(SubsChecklist.SelectedItem.ToString());
             SubsChecklist.Items.Remove(SubsChecklist.SelectedItem);
-            
         }
 
         private void Interval_ValueChanged(object sender, EventArgs e)
         {
-            timer.Interval = GetTimerInterval();
+            Timer1.Interval = GetTimerInterval();
         }
 
         private int GetTimerInterval()
@@ -415,51 +413,53 @@ namespace WallpaperChanger
 
         private void TimeBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            timer.Interval = GetTimerInterval();
+            Timer1.Interval = GetTimerInterval();
         }
 
         private void ValidateSizeTextBoxes(TextBox sender)
         {
             if (sender.Name.StartsWith("min"))
             {
-                if (Convert.ToInt32(maxWidthTextBox.Text) < Convert.ToInt32(minWidthTextBox.Text))
+                if (Convert.ToInt32(MaxWidthTextBox.Text) < Convert.ToInt32(MinWidthTextBox.Text))
                 {
-                    maxWidthTextBox.Text = (Convert.ToInt32(minWidthTextBox.Text) + 1).ToString();
+                    MaxWidthTextBox.Text = (Convert.ToInt32(MinWidthTextBox.Text) + 1).ToString();
                 }
-                if (Convert.ToInt32(maxHeightTextBox.Text) < Convert.ToInt32(minHeightTextBox.Text))
+                
+                if (Convert.ToInt32(MaxHeightTextBox.Text) < Convert.ToInt32(MinHeightTextBox.Text))
                 {
-                    maxHeightTextBox.Text = (Convert.ToInt32(minHeightTextBox.Text) + 1).ToString();
+                    MaxHeightTextBox.Text = (Convert.ToInt32(MinHeightTextBox.Text) + 1).ToString();
                 }
             }
             else
             {
-                if (Convert.ToInt32(maxWidthTextBox.Text) < Convert.ToInt32(minWidthTextBox.Text))
+                if (Convert.ToInt32(MaxWidthTextBox.Text) < Convert.ToInt32(MinWidthTextBox.Text))
                 {
-                    minWidthTextBox.Text = (Convert.ToInt32(maxWidthTextBox.Text) - 1).ToString();
+                    MinWidthTextBox.Text = (Convert.ToInt32(MaxWidthTextBox.Text) - 1).ToString();
                 }
-                if (Convert.ToInt32(maxHeightTextBox.Text) < Convert.ToInt32(minHeightTextBox.Text))
+                
+                if (Convert.ToInt32(MaxHeightTextBox.Text) < Convert.ToInt32(MinHeightTextBox.Text))
                 {
-                    minHeightTextBox.Text = (Convert.ToInt32(maxHeightTextBox.Text) - 1).ToString();
+                    MinHeightTextBox.Text = (Convert.ToInt32(MaxHeightTextBox.Text) - 1).ToString();
                 }
             }
         }
 
-        private void minWidthTextBox_Leave(object sender, EventArgs e)
+        private void MinWidthTextBox_Leave(object sender, EventArgs e)
         {
             ValidateSizeTextBoxes((TextBox)sender);
         }
 
-        private void minHeightTextBox_Leave(object sender, EventArgs e)
+        private void MinHeightTextBox_Leave(object sender, EventArgs e)
         {
             ValidateSizeTextBoxes((TextBox)sender);
         }
 
-        private void maxWidthTextBox_Leave(object sender, EventArgs e)
+        private void MaxWidthTextBox_Leave(object sender, EventArgs e)
         {
             ValidateSizeTextBoxes((TextBox)sender);
         }
 
-        private void maxHeightTextBox_Leave(object sender, EventArgs e)
+        private void MaxHeightTextBox_Leave(object sender, EventArgs e)
         {
             ValidateSizeTextBoxes((TextBox)sender);
         }
@@ -468,7 +468,7 @@ namespace WallpaperChanger
         {
             Show();
             WindowState = FormWindowState.Normal;
-            notifyIcon.Visible = false;
+            NotifyIcon1.Visible = false;
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using System;
-using System.Windows.Forms;
-
-namespace WallpaperChanger
+﻿namespace WallpaperChanger
 {
+	using System;
+	using System.Windows.Forms;
+	
     public class Program
     {
         [STAThread]
@@ -11,7 +11,6 @@ namespace WallpaperChanger
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new LoginForm());
-
         }
     }
 }

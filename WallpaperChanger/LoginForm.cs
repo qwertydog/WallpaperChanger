@@ -1,35 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Security.Authentication;
-using RedditSharp;
-using RedditSharp.Things;
-
-namespace WallpaperChanger
+﻿namespace WallpaperChanger
 {
+	using System;
+	using System.Collections.Generic;
+	using System.ComponentModel;
+	using System.Data;
+	using System.Drawing;
+	using System.Linq;
+	using System.Net.Mail;
+	using System.Security.Authentication;
+	using System.Text;
+	using System.Threading.Tasks;
+	using System.Windows.Forms;
+	using RedditSharp;
+	using RedditSharp.Things;
+	
     public partial class LoginForm : Form
     {
         private Reddit reddit;
-
-        private void OpenMainForm(Reddit reddit)
-        {
-            MainForm Mainform;
-
-            Mainform = new MainForm(reddit);
-
-            Mainform.FormClosing += (s, args) => Close();
-
-            Hide();
-            Mainform.Show();
-        }
-
+        
         public LoginForm()
         {
             InitializeComponent();
@@ -37,6 +25,18 @@ namespace WallpaperChanger
             LoginButton.Select();
 
             reddit = new Reddit();
+        }
+
+        private void OpenMainForm(Reddit reddit)
+        {
+            MainForm mainform;
+
+            mainform = new MainForm(reddit);
+
+            mainform.FormClosing += (s, args) => Close();
+
+            Hide();
+            mainform.Show();
         }
 
         private void ExitButton_Click(object sender, EventArgs e)
@@ -64,14 +64,12 @@ namespace WallpaperChanger
             }
             else
             {
-
                 Cursor = Cursors.WaitCursor;
 
                 try
                 {
                     reddit.LogIn(UsernameBox.Text, PasswordBox.Text);
                     OpenMainForm(reddit);
-
                 }
                 catch (AuthenticationException ex)
                 {
@@ -117,8 +115,8 @@ namespace WallpaperChanger
                         if (dialogResult == DialogResult.OK)
                         {
                             EmailBox.Text = string.Empty;
-
-                        } else if (dialogResult == DialogResult.Cancel)
+                        } 
+                        else if (dialogResult == DialogResult.Cancel)
                         {
                             return;
                         }
