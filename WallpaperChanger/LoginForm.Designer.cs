@@ -1,6 +1,6 @@
 ﻿namespace WallpaperChanger
 {
-    partial class LoginForm
+    partial class LogOnForm
     {
         /// <summary>
         /// Required designer variable.

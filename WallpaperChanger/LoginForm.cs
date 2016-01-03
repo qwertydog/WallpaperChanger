@@ -14,11 +14,11 @@
 	using RedditSharp;
 	using RedditSharp.Things;
 	
-    public partial class LoginForm : Form
+    public partial class LogOnForm : Form
     {
         private Reddit reddit;
         
-        public LoginForm()
+        public LogOnForm()
         {
             InitializeComponent();
 
@@ -104,7 +104,7 @@
                 {
                     try
                     {
-                        var emailAddress = new MailAddress(EmailBox.Text);
+                        var email = new MailAddress(EmailBox.Text);
                     }
                     catch (FormatException ex)
                     {

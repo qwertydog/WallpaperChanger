@@ -128,7 +128,7 @@
                 {
                     var path = DirectoryTextBox.Text;
 
-                    var dir = new DirectoryInfo(path);
+                    //// var dir = new DirectoryInfo(path);
 
                     var files = Directory.EnumerateFiles(DirectoryTextBox.Text, "*.*", SearchOption.AllDirectories)
                         .Where(s => s.ToLower().EndsWith(".bmp") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".png"));
@@ -182,11 +182,16 @@
             if ((e.NewValue == CheckState.Checked) &&
                 (SubsChecklist.CheckedItems.Count + 1) == SubsChecklist.Items.Count)
             {
-                AllCheckbox.Checked = true;
+                AllCheckbox.CheckState = CheckState.Checked;
             } 
+            else if ((e.NewValue == CheckState.Unchecked) &&
+                (SubsChecklist.CheckedItems.Count - 1) == 0)
+            {
+                AllCheckbox.CheckState = CheckState.Unchecked;
+            }
             else
             {
-                AllCheckbox.Checked = false;
+                AllCheckbox.CheckState = CheckState.Indeterminate;
             }
 
             var subName = SubsChecklist.Items[e.Index].ToString();
@@ -388,17 +393,18 @@
 
         private void SubsChecklist_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
-            {
-                var selectedItem = SubsChecklist.IndexFromPoint(e.Location);
-                SubsChecklist.SelectedIndex = selectedItem;
-            }
+            var selectedItem = SubsChecklist.IndexFromPoint(e.Location);
+            SubsChecklist.SelectedIndex = selectedItem;
         }
 
         private void RemoveMenuItem_Click(object sender, EventArgs e)
         {
-            subredditList.Remove(SubsChecklist.SelectedItem.ToString());
-            SubsChecklist.Items.Remove(SubsChecklist.SelectedItem);
+            if (SubsChecklist.SelectedItems.Count > 0)
+            {
+                subredditList.Remove(SubsChecklist.SelectedItem.ToString());
+                SubsChecklist.Items.Remove(SubsChecklist.SelectedItem);
+            }
+            
         }
 
         private void Interval_ValueChanged(object sender, EventArgs e)
