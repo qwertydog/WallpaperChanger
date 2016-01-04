@@ -40,7 +40,7 @@
             FormClosing += (s, args) => NotifyIcon1.Visible = false;
 
             this.reddit = reddit;
-
+            
             rand = new Random();
 
             rk = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
@@ -103,7 +103,7 @@
                 StartupCheckBox.Checked = true;
             }
 
-            CheckAllItems(true);
+            CheckItemsAs(true);
 
             AddEvents(Controls);
 
@@ -112,7 +112,7 @@
             PopulateImages();
         }
 
-        private void CheckAllItems(bool value)
+        private void CheckItemsAs(bool value)
         {
             for (int i = 0; i < SubsChecklist.Items.Count; ++i)
             {
@@ -126,10 +126,6 @@
             {
                 if (DirectoryTextBox.Text.Any())
                 {
-                    var path = DirectoryTextBox.Text;
-
-                    //// var dir = new DirectoryInfo(path);
-
                     var files = Directory.EnumerateFiles(DirectoryTextBox.Text, "*.*", SearchOption.AllDirectories)
                         .Where(s => s.ToLower().EndsWith(".bmp") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".png"));
 
@@ -214,7 +210,7 @@
 
         private void AllCheckbox_Click(object sender, EventArgs e)
         {
-            CheckAllItems(AllCheckbox.Checked);
+            CheckItemsAs(AllCheckbox.Checked);
         }
 
         private void ExitButton_Click(object sender, EventArgs e)
@@ -331,18 +327,25 @@
 
         private async void AddSubButton_Click(object sender, EventArgs e)
         {
-            if (AddSubTextBox.Text.Any() && !subredditList.Contains(AddSubTextBox.Text))
+            if (AddSubTextBox.Text.Any())
             {
-                var sub = await reddit.GetSubredditAsync(AddSubTextBox.Text);
-
-                if (sub != null)
+                if (subredditList.Contains(AddSubTextBox.Text))
                 {
-                    subredditList.Add(sub.Name);
-                    SubsChecklist.Items.Add(sub.Name, true);
+                    MessageBox.Show("Subreddit already in list!");
                 }
                 else
                 {
-                    MessageBox.Show("Subreddit doesn't exist  :(");
+                    var sub = await reddit.GetSubredditAsync(AddSubTextBox.Text);
+
+                    if (sub != null)
+                    {
+                        subredditList.Add(sub.Name);
+                        SubsChecklist.Items.Add(sub.Name, true);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Subreddit doesn't exist  :(");
+                    }
                 }
             }
             
@@ -404,7 +407,6 @@
                 subredditList.Remove(SubsChecklist.SelectedItem.ToString());
                 SubsChecklist.Items.Remove(SubsChecklist.SelectedItem);
             }
-            
         }
 
         private void Interval_ValueChanged(object sender, EventArgs e)
@@ -424,7 +426,7 @@
 
         private void ValidateSizeTextBoxes(TextBox sender)
         {
-            if (sender.Name.StartsWith("min"))
+            if (sender.Name.StartsWith("Min"))
             {
                 if (Convert.ToInt32(MaxWidthTextBox.Text) < Convert.ToInt32(MinWidthTextBox.Text))
                 {

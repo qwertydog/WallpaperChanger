@@ -27,11 +27,11 @@
             reddit = new Reddit();
         }
 
-        private void OpenMainForm(Reddit reddit)
+        private void OpenMainForm(Reddit red)
         {
             MainForm mainform;
 
-            mainform = new MainForm(reddit);
+            mainform = new MainForm(red);
 
             mainform.FormClosing += (s, args) => Close();
 
@@ -104,7 +104,8 @@
                 {
                     try
                     {
-                        var email = new MailAddress(EmailBox.Text);
+                        // Verify that the email entered is valid
+                        new MailAddress(EmailBox.Text);
                     }
                     catch (FormatException ex)
                     {

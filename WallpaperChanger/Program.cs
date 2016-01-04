@@ -1,8 +1,8 @@
 ﻿namespace WallpaperChanger
 {
-	using System;
-	using System.Windows.Forms;
-	
+    using System;
+    using System.Windows.Forms;
+
     public static class Program
     {
         [STAThread]

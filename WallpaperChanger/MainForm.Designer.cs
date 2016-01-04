@@ -333,7 +333,6 @@
             // 
             // ApplyButton
             // 
-            this.ApplyButton.Enabled = false;
             this.ApplyButton.Location = new System.Drawing.Point(238, 255);
             this.ApplyButton.Name = "ApplyButton";
             this.ApplyButton.Size = new System.Drawing.Size(75, 23);
