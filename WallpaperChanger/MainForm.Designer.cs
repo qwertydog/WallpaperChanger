@@ -67,6 +67,7 @@
             this.AddSubTextBox = new System.Windows.Forms.TextBox();
             this.AddSubButton = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.SubsChecklistMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Interval)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -431,10 +432,19 @@
             this.AddSubButton.UseVisualStyleBackColor = true;
             this.AddSubButton.Click += new System.EventHandler(this.AddSubButton_Click);
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(386, 179);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(40, 20);
+            this.textBox1.TabIndex = 29;
+            // 
             // MainForm
             // 
             this.CancelButton = this.ExitButton;
             this.ClientSize = new System.Drawing.Size(438, 291);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.AddSubButton);
             this.Controls.Add(this.AddSubTextBox);
             this.Controls.Add(this.MinimizedCheckBox);
@@ -519,5 +529,6 @@
         private System.Windows.Forms.ContextMenuStrip SubsChecklistMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem RemoveMenuItem;
         private System.Windows.Forms.NotifyIcon NotifyIcon1;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }

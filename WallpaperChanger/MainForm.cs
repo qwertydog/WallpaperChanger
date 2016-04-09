@@ -1,6 +1,9 @@
 ﻿namespace WallpaperChanger
 {
-	using System;
+    using Imgur.API;
+    using Imgur.API.Authentication.Impl;
+    using Imgur.API.Endpoints.Impl;
+    using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Data;
@@ -18,20 +21,22 @@
     {
         private Reddit reddit;
 
+        private ImgurClient imgur;
+
         private RegistryKey rk;
 
         private Random rand;
 
-        private string currentImage, nextImage;
+        private Uri currentImage, nextImage;
 
         // list of subreddits to select from
-        private List<string> subredditList;
+        private List<Subreddit> subredditList;
+
+        // list of all subreddits
+        private List<Subreddit> subredditMasterList = new List<Subreddit>();
 
         // master list of all images
-        private List<string> imagePaths;
-
-        // list of images already displayed
-        ////private List<string> seenList;
+        private List<Uri> imagePaths;
 
         public MainForm(Reddit reddit)
         {
@@ -40,41 +45,42 @@
             FormClosing += (s, args) => NotifyIcon1.Visible = false;
 
             this.reddit = reddit;
-            
+
+            imgur = new ImgurClient(ImgurDetails.ClientId);
+
             rand = new Random();
 
             rk = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
 
-            currentImage = (string)rk.GetValue("Wallpaper");
+            currentImage = new Uri((string)rk.GetValue("Wallpaper"));
 
-            imagePaths = new List<string>();
+            imagePaths = new List<Uri>();
+
+            subredditList = new List<Subreddit>();
 
             ////nextImage = GetNextImage();
 
             if (reddit.User != null && reddit.User.SubscribedSubreddits.Any())
             {
-                subredditList = new List<string>();
-
                 foreach (var sub in reddit.User.SubscribedSubreddits)
                 {
-                    subredditList.Add(sub.Name);
-                    SubsChecklist.Items.Add(sub.Name);
+                    subredditMasterList.Add(sub);
+                    //subredditList.Add(sub);
+                    SubsChecklist.Items.Add(sub.DisplayName);
                 }
             }
             else
             {
                 // default subreddits
-                subredditList = new List<string> 
-                {
-                    "wallpapers",
-                    "wallpaper",
-                    "woahdude",
-                    "interestingasfuck"
-                };
+                subredditMasterList.Add(reddit.GetSubreddit("wallpapers"));
+                subredditMasterList.Add(reddit.GetSubreddit("wallpaper"));
+                subredditMasterList.Add(reddit.GetSubreddit("woahdude"));
+                subredditMasterList.Add(reddit.GetSubreddit("interestingasfuck"));
 
-                foreach (var subreddit in subredditList)
+                foreach (var subreddit in subredditMasterList)
                 {
-                    SubsChecklist.Items.Add(subreddit);
+                    //subredditList.Add(subreddit);
+                    SubsChecklist.Items.Add(subreddit.DisplayName);
                 }
             }            
 
@@ -120,8 +126,10 @@
             }
         }
 
-        private void PopulateImages()
+        async private void PopulateImages()
         {
+            imagePaths.Clear();
+
             if (RedditDirectoryRadioButton.Checked || DirectoryRadioButton.Checked)
             {
                 if (DirectoryTextBox.Text.Any())
@@ -129,43 +137,88 @@
                     var files = Directory.EnumerateFiles(DirectoryTextBox.Text, "*.*", SearchOption.AllDirectories)
                         .Where(s => s.ToLower().EndsWith(".bmp") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".png"));
 
-                    imagePaths.AddRange(files);
-
-                    nextImage = GetNextImage();
+                    foreach (string file in files)
+                    {
+                        imagePaths.Add(new Uri(file));
+                    }
                 }
             }
             
             if (RedditDirectoryRadioButton.Checked || RedditRadioButton.Checked)
             {
-                // do reddit related things
+                foreach (var subreddit in subredditList)
+                {
+                    imagePaths.AddRange(GetImageURIsFromSubreddit(subreddit));
+                }
             }
+
+            nextImage = await GetNextImage();
         }
 
-        private string GetNextImage()
+        private List<Uri> GetImageURIsFromSubreddit(Subreddit subreddit)
         {
+            var posts = subreddit.Hot.Take(25).ToList();
+
+            var postUris = new List<Uri>();
+
+            foreach (Post post in posts)
+            {
+                if (post.Url.ToString().Contains("imgur.com"))
+                {
+                    if (!post.Url.ToString().Split('.').Last().Contains("gif") &&
+                        !post.Url.ToString().Contains("imgur.com/a/") &&
+                        !post.Url.ToString().Contains("imgur.com/gallery/"))
+                    {
+                        postUris.Add(post.Url);
+                    }
+                }
+            }
+
+            return postUris;
+        }
+
+        async private Task<Uri> GetNextImage()
+        {
+
             while (imagePaths.Any())
             {
-                var filePath = imagePaths.ElementAt(rand.Next(imagePaths.Count));
+                var potentialImage = imagePaths.ElementAt(rand.Next(imagePaths.Count));
 
-                if (@filePath == currentImage)
+                if (potentialImage == currentImage)
                 {
                 	continue;
                 }
 
-                var image = Image.FromFile(@filePath);
-
-                if (image.Width >= Convert.ToInt32(MinWidthTextBox.Text) && image.Width <= Convert.ToInt32(MaxWidthTextBox.Text))
+                if (potentialImage.IsFile)
                 {
-                    if (image.Height >= Convert.ToInt32(MinHeightTextBox.Text) && image.Height <= Convert.ToInt32(MaxHeightTextBox.Text))
+                    var image = Image.FromFile(potentialImage.ToString());
+
+                    if (image.Width >= Convert.ToInt32(MinWidthTextBox.Text) && image.Width <= Convert.ToInt32(MaxWidthTextBox.Text))
                     {
-                        return @filePath;
+                        if (image.Height >= Convert.ToInt32(MinHeightTextBox.Text) && image.Height <= Convert.ToInt32(MaxHeightTextBox.Text))
+                        {
+                            return potentialImage;
+                        }
+                    }
+                }
+                else
+                {
+                    var endpoint = new ImageEndpoint(imgur);
+                    var imgurImageDetails = await endpoint.GetImageAsync(potentialImage.ToString().Split('/').Last().Split('.').First());
+
+                    if (imgurImageDetails.Width >= Convert.ToInt32(MinWidthTextBox.Text) && imgurImageDetails.Width <= Convert.ToInt32(MaxWidthTextBox.Text))
+                    {
+                        if (imgurImageDetails.Height >= Convert.ToInt32(MinHeightTextBox.Text) && imgurImageDetails.Height <= Convert.ToInt32(MaxHeightTextBox.Text))
+                        {
+                            return potentialImage;
+                        }
                     }
                 }
 
-                imagePaths.Remove(filePath);
+                imagePaths.Remove(potentialImage); // Image not suitable so remove it
             }
 
-            return string.Empty;
+            return currentImage;
         }
 
         private void AboutMenu_Click(object sender, EventArgs e)
@@ -173,7 +226,7 @@
             MessageBox.Show("Built by Campbell Harding-Deason\n\nAll rights reserved ©", "About");
         }
 
-        private void SubsChecklist_ItemCheck(object sender, ItemCheckEventArgs e)
+        private async void SubsChecklist_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             if ((e.NewValue == CheckState.Checked) &&
                 (SubsChecklist.CheckedItems.Count + 1) == SubsChecklist.Items.Count)
@@ -194,17 +247,23 @@
 
             if (e.NewValue == CheckState.Unchecked)
             {
-                if (subredditList.Contains(subName))
-                {
-                    subredditList.Remove(subName);
-                }  
+                subredditList.RemoveAll(x => x.Name == subName);
             }
             else if (e.NewValue == CheckState.Checked)
             {
-            	if (!subredditList.Contains(subName))
-            	{
-            		subredditList.Add(subName);
-            	}
+                foreach(Subreddit masterSub in subredditMasterList)
+                {
+                    if (subName == masterSub.DisplayName)
+                    {
+                        subredditList.Add(masterSub);
+                        return;
+                    }
+                }
+
+
+                var sub = await reddit.GetSubredditAsync(subName);
+                subredditList.Add(sub);
+                subredditMasterList.Add(sub);
             }
         }
 
@@ -293,7 +352,7 @@
             SetWallpaper();
         }
 
-        private void SetWallpaper()
+        async private void SetWallpaper()
         {
         	/*
             while (seenList.Contains(nextImage))
@@ -305,11 +364,20 @@
             {
                 Wallpaper.Set(nextImage);
 
+                textBox1.Text = imagePaths.Count.ToString();
+
+                imagePaths.Remove(currentImage);
+
+                if (imagePaths.Count < 5)
+                {
+                    PopulateImages();
+                }
+
                 Timer1.Start();
 
                 currentImage = nextImage;
 
-                nextImage = GetNextImage();
+                nextImage = await GetNextImage();
             }
             catch (ArgumentNullException ex)
             {
@@ -329,7 +397,7 @@
         {
             if (AddSubTextBox.Text.Any())
             {
-                if (subredditList.Contains(AddSubTextBox.Text))
+                if (subredditList.Exists(x => x.Name == AddSubTextBox.Text))
                 {
                     MessageBox.Show("Subreddit already in list!");
                 }
@@ -339,7 +407,8 @@
 
                     if (sub != null)
                     {
-                        subredditList.Add(sub.Name);
+                        subredditList.Add(sub);
+                        subredditMasterList.Add(sub);
                         SubsChecklist.Items.Add(sub.Name, true);
                     }
                     else
@@ -404,7 +473,8 @@
         {
             if (SubsChecklist.SelectedItems.Count > 0)
             {
-                subredditList.Remove(SubsChecklist.SelectedItem.ToString());
+                subredditList.RemoveAll(x => x.Name == SubsChecklist.SelectedItem.ToString());
+                subredditMasterList.RemoveAll(x => x.Name == SubsChecklist.SelectedItem.ToString());
                 SubsChecklist.Items.Remove(SubsChecklist.SelectedItem);
             }
         }
