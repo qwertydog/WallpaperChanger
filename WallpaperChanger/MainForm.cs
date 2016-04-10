@@ -60,30 +60,6 @@
 
             ////nextImage = GetNextImage();
 
-            if (reddit.User != null && reddit.User.SubscribedSubreddits.Any())
-            {
-                foreach (var sub in reddit.User.SubscribedSubreddits)
-                {
-                    subredditMasterList.Add(sub);
-                    //subredditList.Add(sub);
-                    SubsChecklist.Items.Add(sub.DisplayName);
-                }
-            }
-            else
-            {
-                // default subreddits
-                subredditMasterList.Add(reddit.GetSubreddit("wallpapers"));
-                subredditMasterList.Add(reddit.GetSubreddit("wallpaper"));
-                subredditMasterList.Add(reddit.GetSubreddit("woahdude"));
-                subredditMasterList.Add(reddit.GetSubreddit("interestingasfuck"));
-
-                foreach (var subreddit in subredditMasterList)
-                {
-                    //subredditList.Add(subreddit);
-                    SubsChecklist.Items.Add(subreddit.DisplayName);
-                }
-            }            
-
             ////images = new List<string>();
 
             ////seenList = new List<string>();
@@ -109,13 +85,58 @@
                 StartupCheckBox.Checked = true;
             }
 
-            CheckItemsAs(true);
-
             AddEvents(Controls);
 
             NotifyIcon1.Icon = Properties.Resources.TrayIcon;
+        }
 
-            PopulateImages();
+        protected async override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            var taskList = new List<Task>();
+
+            if (reddit.User != null && reddit.User.SubscribedSubreddits.Any())
+            {
+                foreach (var sub in reddit.User.SubscribedSubreddits)
+                {
+                    subredditMasterList.Add(sub);
+                    //subredditList.Add(sub);
+                    SubsChecklist.Items.Add(sub.DisplayName);
+                }
+            }
+            else
+            {
+                // default subreddits
+                var wallpapersTask = reddit.GetSubredditAsync("wallpapers");
+                taskList.Add(wallpapersTask);
+                var wallpaperTask = reddit.GetSubredditAsync("wallpaper");
+                taskList.Add(wallpaperTask);
+                var woahdudeTask = reddit.GetSubredditAsync("woahdude");
+                taskList.Add(woahdudeTask);
+                var interestingasfuckTask = reddit.GetSubredditAsync("interestingasfuck");
+                taskList.Add(interestingasfuckTask);
+
+                subredditMasterList.Add(await wallpapersTask);
+                subredditMasterList.Add(await wallpaperTask);
+                subredditMasterList.Add(await woahdudeTask);
+                subredditMasterList.Add(await interestingasfuckTask);
+
+                foreach (var subreddit in subredditMasterList)
+                {
+                    SubsChecklist.Items.Add(subreddit.DisplayName);
+                }
+            }
+
+            Task.WhenAll(taskList);
+            
+            CheckItemsAs(true);
+
+            SubsChecklist.Enabled = true;
+            label3.Visible = false;
+
+
+            //PopulateImages(); make faster!!!!
         }
 
         private void CheckItemsAs(bool value)

@@ -68,6 +68,7 @@
             this.AddSubButton = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.SubsChecklistMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Interval)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -78,6 +79,7 @@
             // 
             this.SubsChecklist.CheckOnClick = true;
             this.SubsChecklist.ContextMenuStrip = this.SubsChecklistMenuStrip;
+            this.SubsChecklist.Enabled = false;
             this.SubsChecklist.FormattingEnabled = true;
             this.SubsChecklist.HorizontalScrollbar = true;
             this.SubsChecklist.Location = new System.Drawing.Point(10, 50);
@@ -440,10 +442,20 @@
             this.textBox1.Size = new System.Drawing.Size(40, 20);
             this.textBox1.TabIndex = 29;
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(51, 143);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(107, 13);
+            this.label3.TabIndex = 30;
+            this.label3.Text = "Loading Subreddits...";
+            // 
             // MainForm
             // 
             this.CancelButton = this.ExitButton;
             this.ClientSize = new System.Drawing.Size(438, 291);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.AddSubButton);
             this.Controls.Add(this.AddSubTextBox);
@@ -530,5 +542,6 @@
         private System.Windows.Forms.ToolStripMenuItem RemoveMenuItem;
         private System.Windows.Forms.NotifyIcon NotifyIcon1;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label3;
     }
 }
