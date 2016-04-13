@@ -42,6 +42,8 @@
         {
             InitializeComponent();
 
+            this.Icon = Properties.Resources.TrayIcon;
+
             FormClosing += (s, args) => NotifyIcon1.Visible = false;
 
             this.reddit = reddit;
@@ -94,7 +96,7 @@
         {
             base.OnLoad(e);
 
-            var taskList = new List<Task>();
+            var tasks = new List<Task>();
 
             if (reddit.User != null && reddit.User.SubscribedSubreddits.Any())
             {
@@ -109,13 +111,13 @@
             {
                 // default subreddits
                 var wallpapersTask = reddit.GetSubredditAsync("wallpapers");
-                taskList.Add(wallpapersTask);
+                tasks.Add(wallpapersTask);
                 var wallpaperTask = reddit.GetSubredditAsync("wallpaper");
-                taskList.Add(wallpaperTask);
+                tasks.Add(wallpaperTask);
                 var woahdudeTask = reddit.GetSubredditAsync("woahdude");
-                taskList.Add(woahdudeTask);
+                tasks.Add(woahdudeTask);
                 var interestingasfuckTask = reddit.GetSubredditAsync("interestingasfuck");
-                taskList.Add(interestingasfuckTask);
+                tasks.Add(interestingasfuckTask);
 
                 subredditMasterList.Add(await wallpapersTask);
                 subredditMasterList.Add(await wallpaperTask);
@@ -128,7 +130,7 @@
                 }
             }
 
-            Task.WhenAll(taskList);
+            //Task.WhenAll(tasks);
             
             CheckItemsAs(true);
 
@@ -136,7 +138,7 @@
             label3.Visible = false;
 
 
-            //PopulateImages(); make faster!!!!
+            PopulateImages(); // make faster!!!!
         }
 
         private void CheckItemsAs(bool value)
@@ -481,6 +483,11 @@
 
         private void NextWallpaperMenuItem_Click(object sender, EventArgs e)
         {
+            if (imagePaths.Count < 5)
+            {
+                PopulateImages();
+            }
+
             SetWallpaper();
         }
 

@@ -22,6 +22,8 @@
         {
             InitializeComponent();
 
+            this.Icon = Properties.Resources.TrayIcon;
+
             LoginButton.Select();
 
             reddit = new Reddit();
