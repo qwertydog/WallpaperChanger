@@ -267,6 +267,7 @@
             this.StartupCheckBox.TabIndex = 17;
             this.StartupCheckBox.Text = "Run at startup";
             this.StartupCheckBox.UseVisualStyleBackColor = true;
+            this.StartupCheckBox.Visible = false;
             this.StartupCheckBox.CheckedChanged += new System.EventHandler(this.StartupCheckBox_CheckedChanged);
             // 
             // RedditRadioButton
@@ -421,6 +422,7 @@
             this.AddSubTextBox.Name = "AddSubTextBox";
             this.AddSubTextBox.Size = new System.Drawing.Size(127, 20);
             this.AddSubTextBox.TabIndex = 27;
+            this.AddSubTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.AddSubTextBox_KeyPress);
             // 
             // AddSubButton
             // 

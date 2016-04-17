@@ -41,7 +41,8 @@
         {
             InitializeComponent();
 
-            this.Icon = Properties.Resources.TrayIcon;
+            Icon = Properties.Resources.TrayIcon;
+            NotifyIcon1.Icon = Icon;
 
             FormClosing += (s, args) => NotifyIcon1.Visible = false;
 
@@ -89,8 +90,6 @@
             }
 
             AddEvents(Controls);
-
-            //NotifyIcon1.Icon = Properties.Resources.TrayIcon;
         }
 
         protected async override void OnLoad(EventArgs e)
@@ -137,8 +136,6 @@
                 }
             }
 
-            PopulateImages();
-
             CheckItemsAs(true);
         }
 
@@ -150,9 +147,9 @@
             }
         }
 
-        private async void PopulateImages()
+        private void PopulateImages()
         {
-            //imagePaths.Clear();
+            imagePaths.Clear();
 
             if (RedditDirectoryRadioButton.Checked || DirectoryRadioButton.Checked)
             {
@@ -175,8 +172,6 @@
                     imagePaths.AddRange(GetImageURIsFromSubreddit(subreddit));
                 }
             }
-
-            nextImage = await GetNextImage();
         }
 
         private List<Uri> GetImageURIsFromSubreddit(Subreddit subreddit)
@@ -185,7 +180,7 @@
 
             var postUris = new List<Uri>();
 
-            foreach (Post post in posts)
+            foreach (var post in posts)
             {
                 if (post.Url.ToString().Contains("imgur.com"))
                 {
@@ -370,13 +365,15 @@
             }
         }
 
-        private void ApplyButton_Click(object sender, EventArgs e)
+        private async void ApplyButton_Click(object sender, EventArgs e)
         {
             ApplyButton.Enabled = false;
 
             ////WindowState = FormWindowState.Minimized;
 
             PopulateImages();
+
+            nextImage = await GetNextImage();
 
             SetWallpaper();
         }
@@ -400,6 +397,8 @@
                 if (imagePaths.Count < 5)
                 {
                     PopulateImages();
+
+                    nextImage = await GetNextImage();
                 }
 
                 Timer1.Start();
@@ -487,11 +486,13 @@
             Close();
         }
 
-        private void NextWallpaperMenuItem_Click(object sender, EventArgs e)
+        private async void NextWallpaperMenuItem_Click(object sender, EventArgs e)
         {
             if (imagePaths.Count < 5)
             {
                 PopulateImages();
+
+                nextImage = await GetNextImage();
             }
 
             SetWallpaper();
@@ -574,6 +575,14 @@
         private void MaxHeightTextBox_Leave(object sender, EventArgs e)
         {
             ValidateSizeTextBoxes((TextBox)sender);
+        }
+
+        private void AddSubTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == '\r')
+            {
+                AddSubButton.PerformClick();
+            }
         }
 
         private void OpenWindow()
