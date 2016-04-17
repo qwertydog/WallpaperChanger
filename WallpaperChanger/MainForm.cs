@@ -1,22 +1,21 @@
 ﻿namespace WallpaperChanger
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.Concurrent;
+    using System.Data;
+    using System.Drawing;
+    using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Windows.Forms;
     using Imgur.API;
     using Imgur.API.Authentication.Impl;
     using Imgur.API.Endpoints.Impl;
-    using System;
-	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.Data;
-	using System.Drawing;
-	using System.IO;
-	using System.Linq;
-	using System.Text;
-	using System.Threading.Tasks;
-	using System.Windows.Forms;
-	using Microsoft.Win32;
-	using RedditSharp;
-	using RedditSharp.Things;
-	
+    using Microsoft.Win32;
+    using RedditSharp;
+    using RedditSharp.Things;
+
     public partial class MainForm : Form
     {
         private Reddit reddit;
@@ -33,7 +32,7 @@
         private List<Subreddit> subredditList;
 
         // list of all subreddits
-        private List<Subreddit> subredditMasterList = new List<Subreddit>();
+        private List<Subreddit> subredditMasterList;
 
         // master list of all images
         private List<Uri> imagePaths;
@@ -60,6 +59,8 @@
 
             subredditList = new List<Subreddit>();
 
+            subredditMasterList = new List<Subreddit>();
+
             ////nextImage = GetNextImage();
 
             ////images = new List<string>();
@@ -70,7 +71,7 @@
             TimeBox.Items.Add(TimeInMilliseconds.Mins);
             TimeBox.Items.Add(TimeInMilliseconds.Hours);
 
-            TimeBox.SelectedItem = TimeInMilliseconds.Mins;
+            TimeBox.SelectedItem = TimeInMilliseconds.Secs;
 
             Timer1.Interval = (int)TimeBox.SelectedItem * (int)Interval.Value;
             
@@ -89,40 +90,46 @@
 
             AddEvents(Controls);
 
-            NotifyIcon1.Icon = Properties.Resources.TrayIcon;
+            //NotifyIcon1.Icon = Properties.Resources.TrayIcon;
         }
 
         protected async override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            var tasks = new List<Task>();
-
             if (reddit.User != null && reddit.User.SubscribedSubreddits.Any())
             {
                 foreach (var sub in reddit.User.SubscribedSubreddits)
                 {
                     subredditMasterList.Add(sub);
-                    //subredditList.Add(sub);
                     SubsChecklist.Items.Add(sub.DisplayName);
                 }
             }
             else
             {
-                // default subreddits
-                var wallpapersTask = reddit.GetSubredditAsync("wallpapers");
-                tasks.Add(wallpapersTask);
-                var wallpaperTask = reddit.GetSubredditAsync("wallpaper");
-                tasks.Add(wallpaperTask);
-                var woahdudeTask = reddit.GetSubredditAsync("woahdude");
-                tasks.Add(woahdudeTask);
-                var interestingasfuckTask = reddit.GetSubredditAsync("interestingasfuck");
-                tasks.Add(interestingasfuckTask);
+                var tasks = new List<Task<Subreddit>>();
 
-                subredditMasterList.Add(await wallpapersTask);
-                subredditMasterList.Add(await wallpaperTask);
-                subredditMasterList.Add(await woahdudeTask);
-                subredditMasterList.Add(await interestingasfuckTask);
+                Console.WriteLine("Adding tasks");
+
+                tasks.Add(reddit.GetSubredditAsync("wallpapers"));
+                tasks.Add(reddit.GetSubredditAsync("wallpaper"));
+                tasks.Add(reddit.GetSubredditAsync("woahdude"));
+                tasks.Add(reddit.GetSubredditAsync("interestingasfuck"));
+
+                Console.WriteLine("Tasks added");
+
+                while (tasks.Any())
+                {
+                    var finishedTask = await Task.WhenAny(tasks);
+
+                    Console.WriteLine(finishedTask.Result.ToString() + " has completed");
+
+                    tasks.Remove(finishedTask);
+
+                    subredditMasterList.Add(await finishedTask);
+
+                    Console.WriteLine(finishedTask.Result.ToString() + " added to master list");
+                }
 
                 foreach (var subreddit in subredditMasterList)
                 {
@@ -130,15 +137,9 @@
                 }
             }
 
-            //Task.WhenAll(tasks);
-            
+            PopulateImages();
+
             CheckItemsAs(true);
-
-            SubsChecklist.Enabled = true;
-            label3.Visible = false;
-
-
-            PopulateImages(); // make faster!!!!
         }
 
         private void CheckItemsAs(bool value)
@@ -149,9 +150,9 @@
             }
         }
 
-        async private void PopulateImages()
+        private async void PopulateImages()
         {
-            imagePaths.Clear();
+            //imagePaths.Clear();
 
             if (RedditDirectoryRadioButton.Checked || DirectoryRadioButton.Checked)
             {
@@ -160,7 +161,7 @@
                     var files = Directory.EnumerateFiles(DirectoryTextBox.Text, "*.*", SearchOption.AllDirectories)
                         .Where(s => s.ToLower().EndsWith(".bmp") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".png"));
 
-                    foreach (string file in files)
+                    foreach (var file in files)
                     {
                         imagePaths.Add(new Uri(file));
                     }
@@ -200,9 +201,8 @@
             return postUris;
         }
 
-        async private Task<Uri> GetNextImage()
+        private async Task<Uri> GetNextImage()
         {
-
             while (imagePaths.Any())
             {
                 var potentialImage = imagePaths.ElementAt(rand.Next(imagePaths.Count));
@@ -226,15 +226,22 @@
                 }
                 else
                 {
-                    var endpoint = new ImageEndpoint(imgur);
-                    var imgurImageDetails = await endpoint.GetImageAsync(potentialImage.ToString().Split('/').Last().Split('.').First());
-
-                    if (imgurImageDetails.Width >= Convert.ToInt32(MinWidthTextBox.Text) && imgurImageDetails.Width <= Convert.ToInt32(MaxWidthTextBox.Text))
+                    try
                     {
-                        if (imgurImageDetails.Height >= Convert.ToInt32(MinHeightTextBox.Text) && imgurImageDetails.Height <= Convert.ToInt32(MaxHeightTextBox.Text))
+                        var endpoint = new ImageEndpoint(imgur);
+                        var imgurImageDetails = await endpoint.GetImageAsync(potentialImage.ToString().Split('/').Last().Split('.').First());
+
+                        if (imgurImageDetails.Width >= Convert.ToInt32(MinWidthTextBox.Text) && imgurImageDetails.Width <= Convert.ToInt32(MaxWidthTextBox.Text))
                         {
-                            return potentialImage;
+                            if (imgurImageDetails.Height >= Convert.ToInt32(MinHeightTextBox.Text) && imgurImageDetails.Height <= Convert.ToInt32(MaxHeightTextBox.Text))
+                            {
+                                return potentialImage;
+                            }
                         }
+                    }
+                    catch (ImgurException ex)
+                    {
+                        Console.WriteLine(ex);
                     }
                 }
 
@@ -274,7 +281,7 @@
             }
             else if (e.NewValue == CheckState.Checked)
             {
-                foreach(Subreddit masterSub in subredditMasterList)
+                foreach (Subreddit masterSub in subredditMasterList)
                 {
                     if (subName == masterSub.DisplayName)
                     {
@@ -282,7 +289,6 @@
                         return;
                     }
                 }
-
 
                 var sub = await reddit.GetSubredditAsync(subName);
                 subredditList.Add(sub);
@@ -375,7 +381,7 @@
             SetWallpaper();
         }
 
-        async private void SetWallpaper()
+        private async void SetWallpaper()
         {
         	/*
             while (seenList.Contains(nextImage))

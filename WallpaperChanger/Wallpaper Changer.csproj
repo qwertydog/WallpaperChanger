@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C6905F9A-6259-4C80-BAC8-70352D18CD98}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WallpaperChanger</RootNamespace>
     <AssemblyName>Wallpaper Changer</AssemblyName>
@@ -20,7 +20,7 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <RunCodeAnalysis>False</RunCodeAnalysis>
     <SourceAnalysisOverrideSettingsFile>C:\Users\campbell.ALARMNZ\Downloads\Github\ConsoleApplication3\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
-    <PublishUrl>C:\Users\Campbell\Documents\Visual Studio 2015\Projects\Wallpaper Changer\</PublishUrl>
+    <PublishUrl>C:\Users\Campbell\Desktop\Wallpaper Changer\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -31,7 +31,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -46,7 +46,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>ExtendedDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -70,11 +71,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>WallpaperChanger.Program</StartupObject>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
-  <PropertyGroup>
-    <NoWin32Manifest>True</NoWin32Manifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <SignAssembly>False</SignAssembly>
   </PropertyGroup>
@@ -93,22 +93,29 @@
   <PropertyGroup>
     <ApplicationIcon>TrayIcon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Imgur.API, Version=3.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Imgur.API.3.7.0-beta3\lib\net45\Imgur.API.dll</HintPath>
       <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="RedditSharp, Version=1.0.22.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RedditSharp.1.0.22\lib\RedditSharp.dll</HintPath>
       <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

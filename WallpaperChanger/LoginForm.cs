@@ -31,14 +31,17 @@
 
         private void OpenMainForm(Reddit red)
         {
+            this.Cursor = Cursors.WaitCursor;
+
             MainForm mainform;
 
             mainform = new MainForm(red);
 
             mainform.FormClosing += (s, args) => Close();
 
-            Hide();
             mainform.Show();
+
+            Hide();
         }
 
         private void ExitButton_Click(object sender, EventArgs e)

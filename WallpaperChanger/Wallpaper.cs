@@ -97,9 +97,7 @@
             	SPISETDESKWALLPAPER,
                 0,
                 path,
-                SPIFUPDATEINIFILE | SPIFSENDWININICHANGE);
-
-            
+                SPIFUPDATEINIFILE | SPIFSENDWININICHANGE);            
         }
     }
 }
